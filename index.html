@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Flappy UFO – Multiplayer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000011;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+  }
+  canvas {
+    display: block;
+    image-rendering: pixelated;
+    max-width: 100vw;
+    max-height: 100vh;
+    touch-action: none;
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+// Responsive sizing
+const BASE_W = 480, BASE_H = 680;
+let scale = 1;
+function resize() {
+  const sw = window.innerWidth / BASE_W;
+  const sh = window.innerHeight / BASE_H;
+  scale = Math.min(sw, sh, 2);
+  canvas.width = BASE_W;
+  canvas.height = BASE_H;
+  canvas.style.width = (BASE_W * scale) + 'px';
+  canvas.style.height = (BASE_H * scale) + 'px';
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ── Constants ──────────────────────────────────────────
+const W = BASE_W, H = BASE_H;
+const GRAVITY = 0.38;
+const FLAP_POWER = -8.2;
+const PIPE_SPEED = 2.8;
+const PIPE_GAP = 138;
+const PIPE_INTERVAL = 95; // frames
+const GROUND_H = 24;
+
+const STATE = { MENU: 0, COUNTDOWN: 1, PLAY: 2, OVER: 3 };
+
+const PCONF = [
+  { name:'P1', color:'#00ffaa', dark:'#006644', key:'SPACE / Katt', codes:new Set(['Space']) },
+  { name:'P2', color:'#ff4488', dark:'#880033', key:'W',            codes:new Set(['KeyW']) },
+  { name:'P3', color:'#44aaff', dark:'#003388', key:'↑ FEL',        codes:new Set(['ArrowUp']) },
+  { name:'P4', color:'#ffcc00', dark:'#885500', key:'ENTER',         codes:new Set(['Enter','NumpadEnter']) },
+];
+
+// ── Stars ──────────────────────────────────────────────
+const STARS = Array.from({length:120}, () => ({
+  x: Math.random()*W, y: Math.random()*(H-GROUND_H),
+  r: Math.random()*1.6+0.2, ph: Math.random()*Math.PI*2
+}));
+
+// ── Nebula layers (parallax) ────────────────────────────
+const NEBULAE = Array.from({length:4}, () => ({
+  x: Math.random()*W, y: Math.random()*(H*0.7),
+  rx: 80+Math.random()*60, ry: 40+Math.random()*30,
+  hue: Math.random()*360, spd: 0.2+Math.random()*0.3
+}));
+
+// ── UFO class ──────────────────────────────────────────
+class UFO {
+  constructor(cfg, startX) {
+    this.cfg = cfg;
+    this.x = startX;
+    this.y = H/2;
+    this.vy = 0;
+    this.alive = true;
+    this.score = 0;
+    this.lightAngle = Math.random()*Math.PI*2;
+    this.flash = 0;       // death flash frames
+    this.deathY = 0;
+    this.deathVy = 0;
+  }
+  flap() {
+    if (!this.alive) return;
+    this.vy = FLAP_POWER;
+  }
+  update() {
+    if (!this.alive) {
+      // death animation
+      this.deathVy += GRAVITY;
+      this.deathY += this.deathVy;
+      this.flash = Math.max(0, this.flash - 1);
+      return;
+    }
+    this.vy += GRAVITY;
+    this.y += this.vy;
+    this.lightAngle += 0.09;
+    // hit ceiling or floor
+    if (this.y < 20 || this.y > H - GROUND_H - 18) this.die();
+  }
+  die() {
+    if (!this.alive) return;
+    this.alive = false;
+    this.deathY = this.y;
+    this.deathVy = -3;
+    this.flash = 18;
+  }
+  get drawY() { return this.alive ? this.y : this.deathY; }
+  get tilt() { return this.alive ? Math.max(-0.45, Math.min(0.5, this.vy * 0.06)) : 0.6; }
+
+  draw() {
+    const ry = this.drawY;
+    ctx.save();
+    ctx.translate(this.x, ry);
+    ctx.rotate(this.tilt);
+    if (!this.alive && this.flash % 2 === 0) { ctx.restore(); return; }
+
+    const c = this.cfg.color;
+    ctx.shadowBlur = this.alive ? 18 : 6;
+    ctx.shadowColor = c;
+
+    // Saucer body
+    ctx.beginPath();
+    ctx.ellipse(0, 3, 26, 11, 0, 0, Math.PI*2);
+    const sg = ctx.createLinearGradient(0,-11,0,14);
+    sg.addColorStop(0,'#ccccee');
+    sg.addColorStop(0.4,'#9999bb');
+    sg.addColorStop(1,'#444466');
+    ctx.fillStyle = sg;
+    ctx.fill();
+    ctx.strokeStyle = c;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Rim ring highlight
+    ctx.beginPath();
+    ctx.ellipse(0, 3, 26, 11, 0, -0.3, 0.3);
+    ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Dome
+    ctx.beginPath();
+    ctx.ellipse(0, -2, 13, 11, 0, Math.PI, Math.PI*2);
+    const dg = ctx.createRadialGradient(-3,-9,1, 0,-4,14);
+    dg.addColorStop(0,'rgba(220,255,255,0.92)');
+    dg.addColorStop(0.45,'rgba(100,200,255,0.55)');
+    dg.addColorStop(1,'rgba(40,80,200,0.2)');
+    ctx.fillStyle = dg;
+    ctx.fill();
+    ctx.strokeStyle = c;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Alien inside dome
+    if (this.alive) {
+      ctx.save();
+      ctx.scale(0.55, 0.55);
+      // head
+      ctx.beginPath();
+      ctx.ellipse(0, -9, 7, 8, 0, 0, Math.PI*2);
+      ctx.fillStyle = '#88ffcc';
+      ctx.shadowBlur = 0;
+      ctx.fill();
+      // eyes
+      ctx.fillStyle = '#000';
+      ctx.beginPath(); ctx.ellipse(-3,-10,2,3,-.3,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(3,-10,2,3,.3,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle = 'white';
+      ctx.beginPath(); ctx.arc(-2.5,-10.5,.8,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(3.5,-10.5,.8,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+
+    // Rotating lights
+    const LIGHT_COLS = ['#ff3333','#ffaa00','#33ff33','#3366ff','#ff33ff'];
+    for (let i=0;i<5;i++) {
+      const a = (i/5)*Math.PI*2 + this.lightAngle;
+      const lx = Math.cos(a)*17, ly = Math.sin(a)*5+3;
+      ctx.beginPath();
+      ctx.arc(lx, ly, 3.2, 0, Math.PI*2);
+      ctx.shadowColor = LIGHT_COLS[i];
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = LIGHT_COLS[i];
+      ctx.fill();
+    }
+
+    // Beam (if alive & flying upward)
+    if (this.alive && this.vy < -2) {
+      ctx.beginPath();
+      ctx.moveTo(-6, 14); ctx.lineTo(6, 14);
+      ctx.lineTo(14, 44); ctx.lineTo(-14, 44);
+      ctx.closePath();
+      const bg = ctx.createLinearGradient(0,14,0,44);
+      bg.addColorStop(0, 'rgba(100,255,200,0.45)');
+      bg.addColorStop(1, 'rgba(100,255,200,0)');
+      ctx.fillStyle = bg;
+      ctx.shadowBlur = 0;
+      ctx.fill();
+    }
+
+    // Label
+    ctx.shadowBlur = 6; ctx.shadowColor = c;
+    ctx.fillStyle = c;
+    ctx.font = 'bold 9px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(this.cfg.name, 0, 24);
+
+    ctx.restore();
+  }
+}
+
+// ── Pipe class ─────────────────────────────────────────
+class Pipe {
+  constructor() {
+    this.x = W + 10;
+    const minTop = 80, minBot = 80;
+    const maxTop = H - GROUND_H - PIPE_GAP - minBot;
+    this.topH = minTop + Math.random() * (maxTop - minTop);
+    this.botY = this.topH + PIPE_GAP;
+    this.botH = H - GROUND_H - this.botY;
+    this.w = 54;
+    this.passedSet = new Set(); // which UFOs have scored
+    this.hue = 120 + Math.random()*40 - 20; // green-ish
+  }
+  update() { this.x -= PIPE_SPEED; }
+  gone()    { return this.x + this.w < -10; }
+
+  drawPipe(x, y, w, h, cap, capTop) {
+    const g = ctx.createLinearGradient(x,0,x+w,0);
+    g.addColorStop(0,  `hsl(${this.hue},55%,18%)`);
+    g.addColorStop(0.3,`hsl(${this.hue},55%,38%)`);
+    g.addColorStop(0.6,`hsl(${this.hue},55%,25%)`);
+    g.addColorStop(1,  `hsl(${this.hue},55%,14%)`);
+    ctx.fillStyle = g;
+    ctx.fillRect(x, y, w, h);
+    // shine
+    ctx.fillStyle = 'rgba(255,255,255,0.07)';
+    ctx.fillRect(x+5, y, 8, h);
+    // cap
+    ctx.fillStyle = `hsl(${this.hue},55%,28%)`;
+    if (capTop) ctx.fillRect(x-5, y+h-20, w+10, 22);
+    else        ctx.fillRect(x-5, y, w+10, 22);
+    // cap highlight
+    ctx.fillStyle = `hsl(${this.hue},55%,48%)`;
+    if (capTop) ctx.fillRect(x-5, y+h-20, w+10, 4);
+    else        ctx.fillRect(x-5, y, w+10, 4);
+    // Alien markings
+    ctx.strokeStyle = `hsla(${this.hue+60},80%,60%,0.25)`;
+    ctx.lineWidth = 1;
+    for (let i=0;i<3;i++) {
+      ctx.beginPath();
+      ctx.moveTo(x+12+i*12, y+10); ctx.lineTo(x+12+i*12, y+h-10);
+      ctx.stroke();
+    }
+  }
+
+  draw() {
+    ctx.save();
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = `hsl(${this.hue},80%,40%)`;
+    this.drawPipe(this.x, 0, this.w, this.topH, true, true);
+    this.drawPipe(this.x, this.botY, this.w, this.botH, true, false);
+    ctx.restore();
+  }
+
+  hits(ufo) {
+    if (!ufo.alive) return false;
+    const r = 15;
+    return (ufo.x+r > this.x && ufo.x-r < this.x+this.w) &&
+           (ufo.y-r < this.topH || ufo.y+r > this.botY);
+  }
+}
+
+// ── Particles ──────────────────────────────────────────
+const particles = [];
+function spawnParticles(x, y, color) {
+  for (let i=0;i<18;i++) {
+    const a = Math.random()*Math.PI*2;
+    const spd = 1+Math.random()*4;
+    particles.push({
+      x, y, vx: Math.cos(a)*spd, vy: Math.sin(a)*spd-2,
+      life: 1, color, r: 2+Math.random()*3
+    });
+  }
+}
+function updateParticles() {
+  for (let i=particles.length-1;i>=0;i--) {
+    const p = particles[i];
+    p.x += p.vx; p.y += p.vy; p.vy += 0.15;
+    p.life -= 0.025;
+    if (p.life <= 0) particles.splice(i,1);
+  }
+}
+function drawParticles() {
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = p.color.replace(')', `,${p.life})`).replace('rgb','rgba');
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 8;
+    ctx.fill();
+  });
+  ctx.shadowBlur = 0;
+}
+
+// ── Background ─────────────────────────────────────────
+function drawBg(frame) {
+  // space gradient
+  const bg = ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,'#000010');
+  bg.addColorStop(0.6,'#00002a');
+  bg.addColorStop(1,'#000018');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0,0,W,H);
+
+  // nebulae
+  NEBULAE.forEach(n => {
+    n.x -= n.spd;
+    if (n.x + n.rx < 0) n.x = W + n.rx;
+    ctx.save();
+    ctx.translate(n.x, n.y);
+    const ng = ctx.createRadialGradient(0,0,0, 0,0,Math.max(n.rx,n.ry));
+    ng.addColorStop(0, `hsla(${n.hue},70%,30%,0.13)`);
+    ng.addColorStop(1, 'transparent');
+    ctx.fillStyle = ng;
+    ctx.scale(1, n.ry/n.rx);
+    ctx.beginPath();
+    ctx.arc(0,0,n.rx,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  });
+
+  // stars
+  STARS.forEach(s => {
+    s.ph += 0.015;
+    const alpha = 0.4 + 0.6*Math.abs(Math.sin(s.ph));
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+    ctx.fill();
+  });
+
+  // ground
+  const gy = H - GROUND_H;
+  const gg = ctx.createLinearGradient(0,gy,0,H);
+  gg.addColorStop(0,'#1a1a3a');
+  gg.addColorStop(1,'#0a0a1a');
+  ctx.fillStyle = gg;
+  ctx.fillRect(0, gy, W, GROUND_H);
+  // ground line
+  ctx.strokeStyle = '#3a3a6a';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke();
+}
+
+// ── Game state ─────────────────────────────────────────
+let state = STATE.MENU;
+let ufos = [], pipes = [];
+let frame = 0;
+let numPlayers = 1;
+let countdown = 3;
+let countdownTimer = 0;
+let bestScores = [0,0,0,0];
+
+function initGame() {
+  ufos = [];
+  pipes = [];
+  frame = 0;
+  particles.length = 0;
+  for (let i=0;i<numPlayers;i++) {
+    ufos.push(new UFO(PCONF[i], 100 + i * 28));
+  }
+  countdown = 3;
+  countdownTimer = 0;
+  state = STATE.COUNTDOWN;
+}
+
+function flap(pidx) {
+  if (state === STATE.COUNTDOWN) {
+    // early flap queued – will fire on start
+    if (ufos[pidx]) ufos[pidx]._earlyFlap = true;
+    return;
+  }
+  if (state === STATE.PLAY && ufos[pidx]) ufos[pidx].flap();
+  if (state === STATE.MENU) {
+    initGame();
+  }
+  if (state === STATE.OVER && pidx === 0) {
+    state = STATE.MENU;
+  }
+}
+
+// ── Draw menu ──────────────────────────────────────────
+let menuFrame = 0;
+const menuUFOs = PCONF.map((c,i) => {
+  const u = new UFO(c, 60 + i*120);
+  u.y = 160 + Math.sin(i*1.5)*20;
+  return u;
+});
+
+function drawMenu() {
+  menuFrame++;
+
+  // Animate demo UFOs
+  menuUFOs.forEach((u,i) => {
+    u.lightAngle += 0.09;
+    u.y = 165 + Math.sin((menuFrame*0.03)+i*1.5)*22;
+    u.vy = Math.cos((menuFrame*0.03)+i*1.5)*0.6;
+    if (i < numPlayers) u.alive = true;
+    else u.alive = false;
+    if (i < numPlayers) u.draw();
+  });
+
+  // Title
+  ctx.save();
+  const pulse = 0.97 + 0.03*Math.sin(menuFrame*0.05);
+  ctx.translate(W/2, 72); ctx.scale(pulse,pulse);
+  ctx.shadowBlur = 30; ctx.shadowColor = '#00ffcc';
+  ctx.fillStyle = '#00ffcc';
+  ctx.font = 'bold 48px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('FLAPPY UFO', 0, 0);
+  ctx.shadowBlur = 12; ctx.shadowColor = '#8888ff';
+  ctx.fillStyle = '#aaaaff';
+  ctx.font = '17px Arial';
+  ctx.fillText('🌌  Multiplayer Edition  🌌', 0, 30);
+  ctx.restore();
+
+  // Player count selector
+  ctx.fillStyle = 'rgba(0,0,0,0.45)';
+  ctx.beginPath(); ctx.roundRect(W/2-160, 215, 320, 70, 14); ctx.fill();
+  ctx.fillStyle = '#aaaaff'; ctx.shadowBlur=0;
+  ctx.font = '16px Arial'; ctx.textAlign='center';
+  ctx.fillText('Játékosok száma:', W/2, 236);
+
+  for (let i=1;i<=4;i++) {
+    const bx = W/2 + (i-2.5)*66;
+    const by = 255;
+    const sel = (i === numPlayers);
+    ctx.beginPath(); ctx.roundRect(bx-20, by-20, 40, 40, 8);
+    ctx.shadowBlur = sel ? 14 : 0;
+    ctx.shadowColor = PCONF[i-1].color;
+    ctx.fillStyle = sel ? PCONF[i-1].color : '#222244';
+    ctx.fill();
+    ctx.strokeStyle = PCONF[i-1].color;
+    ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = sel ? '#000' : PCONF[i-1].color;
+    ctx.font = `bold 20px Arial`;
+    ctx.fillText(i, bx, by+7);
+  }
+
+  // Controls
+  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  ctx.beginPath(); ctx.roundRect(W/2-160, 300, 320, 24+numPlayers*27, 12); ctx.fill();
+  ctx.fillStyle = '#8888cc'; ctx.shadowBlur=0;
+  ctx.font = '14px Arial'; ctx.textAlign='center';
+  ctx.fillText('Irányítás:', W/2, 318);
+  for (let i=0;i<numPlayers;i++) {
+    const c = PCONF[i];
+    ctx.shadowBlur=4; ctx.shadowColor=c.color;
+    ctx.fillStyle=c.color;
+    ctx.font=`bold 14px Arial`;
+    ctx.fillText(`${c.name}  →  ${c.key}`, W/2, 341+i*27);
+  }
+  ctx.shadowBlur=0;
+
+  // Start button
+  const sy = 316 + numPlayers*27 + 22;
+  const btnPulse = 0.95+0.05*Math.sin(menuFrame*0.08);
+  ctx.save();
+  ctx.translate(W/2, sy+22); ctx.scale(btnPulse,btnPulse);
+  ctx.shadowBlur=18; ctx.shadowColor='#00ffaa';
+  ctx.fillStyle='#00ffaa';
+  ctx.beginPath(); ctx.roundRect(-90,-22,180,44,12); ctx.fill();
+  ctx.fillStyle='#000';
+  ctx.font='bold 20px Arial';
+  ctx.fillText('▶  INDÍTÁS!', 0, 7);
+  ctx.restore();
+
+  ctx.fillStyle='#445566'; ctx.font='12px Arial';
+  ctx.fillText('[ 1 – 4 ] billentyű: játékosok  |  SPACE vagy kattintás: indítás', W/2, sy+56);
+
+  // store button bounds for click
+  menuUFOs._startBtn = { x:W/2-90, y:sy, w:180, h:44 };
+  menuUFOs._btnY = { counts: PCONF.map((_,i)=>({ x:W/2+(i-1.5)*66-20, y:235, w:40, h:40 })) };
+}
+
+// ── Draw HUD ───────────────────────────────────────────
+function drawHUD() {
+  ufos.forEach((u,i) => {
+    ctx.shadowBlur = u.alive ? 8 : 0;
+    ctx.shadowColor = u.cfg.color;
+    ctx.fillStyle = u.alive ? u.cfg.color : 'rgba(150,150,150,0.4)';
+    ctx.font = `bold 20px Arial`;
+    ctx.textAlign = 'left';
+    ctx.fillText(`${u.cfg.name} ${u.score}`, 14 + i*110, 36);
+  });
+  ctx.shadowBlur=0;
+}
+
+// ── Draw game over ─────────────────────────────────────
+function drawGameOver() {
+  ctx.fillStyle='rgba(0,0,5,0.72)';
+  ctx.fillRect(0,0,W,H);
+
+  ctx.save();
+  ctx.shadowBlur=25; ctx.shadowColor='#ff4455';
+  ctx.fillStyle='#ff4455';
+  ctx.font='bold 46px Arial'; ctx.textAlign='center';
+  ctx.fillText('JÁTÉK VÉGE', W/2, 180);
+  ctx.restore();
+
+  const sorted = [...ufos].sort((a,b)=>b.score-a.score);
+  ctx.shadowBlur=10; ctx.shadowColor='#ffdd00';
+  ctx.fillStyle='#ffdd44';
+  ctx.font='bold 20px Arial'; ctx.textAlign='center';
+  ctx.fillText('Végeredmény', W/2, 235);
+
+  const medals = ['🥇','🥈','🥉','  '];
+  sorted.forEach((u,i) => {
+    ctx.shadowBlur=6; ctx.shadowColor=u.cfg.color;
+    ctx.fillStyle = u.cfg.color;
+    ctx.font = `${i===0?'bold 22px':'18px'} Arial`;
+    ctx.fillText(`${medals[Math.min(i,3)]}  ${u.cfg.name}: ${u.score} pont`, W/2, 272+i*36);
+    // update best
+    const pi = PCONF.indexOf(u.cfg);
+    if (u.score > bestScores[pi]) bestScores[pi] = u.score;
+  });
+
+  if (numPlayers > 1) {
+    ctx.fillStyle='#555577'; ctx.font='13px Arial';
+    ctx.fillText('Legjobb pontszámok:', W/2, 420);
+    ufos.forEach((u,i) => {
+      ctx.fillStyle=u.cfg.color+'bb';
+      ctx.fillText(`${u.cfg.name}: ${bestScores[i]}`, W/2+(i-ufos.length/2+0.5)*90, 440);
+    });
+  }
+
+  // blink restart
+  if (Math.floor(Date.now()/600)%2===0) {
+    ctx.shadowBlur=12; ctx.shadowColor='#00ffaa';
+    ctx.fillStyle='#00ffaa';
+    ctx.font='bold 18px Arial';
+    ctx.fillText('SPACE / Kattintás → Főmenü', W/2, 490);
+  }
+  ctx.shadowBlur=0;
+}
+
+// ── Countdown ─────────────────────────────────────────
+function drawCountdown() {
+  const num = countdown;
+  const progress = 1 - (countdownTimer % 60)/60;
+  ctx.save();
+  ctx.translate(W/2, H/2-40);
+  const sc = 0.6 + 0.6*progress;
+  ctx.scale(sc,sc);
+  ctx.globalAlpha = progress;
+  ctx.shadowBlur=40; ctx.shadowColor='#ffdd00';
+  ctx.fillStyle='#ffdd00';
+  ctx.font='bold 110px Arial'; ctx.textAlign='center';
+  ctx.fillText(num === 0 ? 'RAJT!' : num, 0, 40);
+  ctx.restore();
+
+  ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.font='15px Arial'; ctx.textAlign='center';
+  ctx.fillText('Készen állsz?', W/2, H/2+55);
+}
+
+// ── Main loop ──────────────────────────────────────────
+let lastTime = 0;
+function loop(ts) {
+  requestAnimationFrame(loop);
+  drawBg(frame);
+
+  if (state === STATE.MENU) {
+    drawMenu();
+  }
+  else if (state === STATE.COUNTDOWN) {
+    countdownTimer++;
+    // draw UFOs in position
+    ufos.forEach(u => u.draw());
+    drawCountdown();
+
+    if (countdownTimer >= 60) {
+      countdown--;
+      countdownTimer = 0;
+      if (countdown < 0) {
+        // start!
+        state = STATE.PLAY;
+        ufos.forEach(u => { if (u._earlyFlap) { u.flap(); u._earlyFlap=false; } });
+      }
+    }
+  }
+  else if (state === STATE.PLAY) {
+    frame++;
+
+    // spawn pipes
+    if (frame % PIPE_INTERVAL === 0) pipes.push(new Pipe());
+
+    // update & draw pipes
+    pipes = pipes.filter(p=>!p.gone());
+    pipes.forEach(p => {
+      p.update();
+      p.draw();
+      // collisions
+      ufos.forEach(u => {
+        if (p.hits(u)) {
+          spawnParticles(u.x, u.y, u.cfg.color);
+          u.die();
+        }
+      });
+      // scoring – each UFO scores individually
+      ufos.forEach(u => {
+        if (!p.passedSet.has(u) && p.x + p.w < u.x) {
+          p.passedSet.add(u);
+          if (u.alive) u.score++;
+        }
+      });
+    });
+
+    updateParticles();
+    drawParticles();
+
+    ufos.forEach(u => { u.update(); u.draw(); });
+
+    drawHUD();
+
+    if (ufos.every(u=>!u.alive)) state = STATE.OVER;
+  }
+  else if (state === STATE.OVER) {
+    pipes.forEach(p=>p.draw());
+    updateParticles(); drawParticles();
+    ufos.forEach(u=>{ u.update(); u.draw(); });
+    drawHUD();
+    drawGameOver();
+  }
+}
+requestAnimationFrame(loop);
+
+// ── Input ──────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  // Player controls
+  for (let i=0;i<PCONF.length;i++) {
+    if (PCONF[i].codes.has(e.code)) {
+      if (e.code==='Space') e.preventDefault();
+      if (e.code==='ArrowUp') e.preventDefault();
+      flap(i);
+      return;
+    }
+  }
+  // num keys for player count in menu
+  if (state === STATE.MENU && e.key>='1' && e.key<='4') {
+    numPlayers = parseInt(e.key);
+  }
+  if (state === STATE.OVER && e.code === 'Escape') state = STATE.MENU;
+});
+
+canvas.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) / scale;
+  const my = (e.clientY - rect.top) / scale;
+
+  if (state === STATE.MENU) {
+    // Check player count buttons
+    for (let i=1;i<=4;i++) {
+      const bx = W/2 + (i-2.5)*66;
+      if (mx>=bx-20 && mx<=bx+20 && my>=235 && my<=275) {
+        numPlayers=i; return;
+      }
+    }
+    // Start button – anywhere else
+    initGame();
+  } else {
+    flap(0);
+  }
+});
+
+// Prevent scroll on arrow keys
+window.addEventListener('keydown', e => {
+  if (['ArrowUp','ArrowDown','Space'].includes(e.code)) e.preventDefault();
+}, { passive:false });
+</script>
+</body>
+</html>
