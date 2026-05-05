@@ -2,695 +2,928 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Flappy UFO – Multiplayer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1956 – A Szabadság Népe | 70. Évforduló</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Oswald:wght@300;400;600&display=swap" rel="stylesheet">
+
+<!-- Preload critical assets from root directory -->
+<link rel="preload" as="image" href="1956_hero_banner.png" fetchpriority="high">
+<link rel="preload" as="audio" href="sound.mp3" type="audio/mpeg">
+
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: #000011;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    font-family: 'Arial', sans-serif;
-    overflow: hidden;
+:root {
+  --burgundy:     #6B0F1A;
+  --burgundy-mid: #8B1A2A;
+  --burgundy-lt:  #A83244;
+  --charcoal:     #1A1A1A;
+  --charcoal-mid: #2C2C2C;
+  --charcoal-lt:  #3D3D3D;
+  --offwhite:     #F5F0E8;
+  --cream:        #EDE5D4;
+  --gold:         #C9A84C;
+  --gold-lt:      #E0C47A;
+  --gold-dk:      #9A7A2E;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--charcoal);
+  color: var(--offwhite);
+  font-family: 'EB Garamond', Georgia, serif;
+  overflow-x: hidden;
+}
+
+/* ── SCROLL PROGRESS ── */
+#progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--burgundy-lt));
+  width: 0%; z-index: 9999; transition: width 0.1s linear;
+}
+
+/* ═══════════════════════════════
+   NAV
+═══════════════════════════════ */
+nav {
+  position: fixed; top: 3px; left: 0; right: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.75rem 2rem;
+  background: rgba(26,26,26,0.88);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+}
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--gold); letter-spacing: 0.05em; flex-shrink: 0;
+}
+.nav-center { display: flex; gap: 1.8rem; list-style: none; }
+.nav-center a {
+  font-family: 'Oswald', sans-serif; font-size: 0.73rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--cream); text-decoration: none;
+  opacity: 0.8; transition: opacity 0.2s, color 0.2s;
+}
+.nav-center a:hover { opacity: 1; color: var(--gold); }
+
+/* MUSIC BUTTON */
+.nav-right { display: flex; align-items: center; gap: 0.8rem; }
+
+#musicBtn {
+  display: flex; align-items: center; gap: 0.45rem;
+  background: none; border: 1px solid rgba(201,168,76,0.4);
+  border-radius: 20px; padding: 0.38rem 0.9rem;
+  cursor: pointer; color: var(--gold);
+  font-family: 'Oswald', sans-serif; font-size: 0.68rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  transition: background 0.25s, border-color 0.25s;
+  white-space: nowrap;
+}
+#musicBtn:hover { background: rgba(201,168,76,0.1); border-color: var(--gold); }
+#musicBtn.playing { background: rgba(201,168,76,0.14); border-color: var(--gold); }
+
+.music-bars { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+.music-bars span {
+  width: 2px; background: var(--gold); border-radius: 1px; display: block;
+}
+.music-bars span:nth-child(1) { height: 6px;  }
+.music-bars span:nth-child(2) { height: 12px; }
+.music-bars span:nth-child(3) { height: 8px;  }
+.music-bars span:nth-child(4) { height: 10px; }
+
+#musicBtn.playing .music-bars span { animation: barBounce 0.8s ease-in-out infinite alternate; }
+#musicBtn.playing .music-bars span:nth-child(1) { animation-delay: 0s; }
+#musicBtn.playing .music-bars span:nth-child(2) { animation-delay: 0.15s; }
+#musicBtn.playing .music-bars span:nth-child(3) { animation-delay: 0.3s; }
+#musicBtn.playing .music-bars span:nth-child(4) { animation-delay: 0.1s; }
+@keyframes barBounce {
+  from { transform: scaleY(0.25); }
+  to   { transform: scaleY(1); }
+}
+
+.music-icon-pause { display: none; }
+#musicBtn.playing .music-icon-play  { display: none; }
+#musicBtn.playing .music-icon-pause { display: inline; }
+
+/* hamburger */
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+.hamburger span { width: 22px; height: 2px; background: var(--gold); display: block; }
+
+@media (max-width: 760px) {
+  .hamburger { display: flex; }
+  .nav-center {
+    display: none; flex-direction: column; gap: 1.2rem;
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: rgba(22,22,22,0.97); padding: 2rem;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
   }
-  canvas {
-    display: block;
-    image-rendering: pixelated;
-    max-width: 100vw;
-    max-height: 100vh;
-    touch-action: none;
-  }
+  .nav-center.open { display: flex; }
+  .music-label { display: none; }
+  #musicBtn { padding: 0.38rem 0.65rem; }
+}
+
+/* ═══════════════════════════════
+   VIDEO MODAL
+═══════════════════════════════ */
+#videoModal {
+  display: none; position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0,0,0,0.93);
+  align-items: center; justify-content: center;
+}
+#videoModal.open { display: flex; animation: modalIn 0.3s ease; }
+@keyframes modalIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-inner {
+  position: relative; width: 90vw; max-width: 960px;
+  border: 1px solid rgba(201,168,76,0.25); border-radius: 2px;
+  overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.75);
+}
+.modal-inner video {
+  width: 100%; display: block; aspect-ratio: 16/9; background: #000;
+}
+#modalClose {
+  position: absolute; top: 0.75rem; right: 0.75rem;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(26,26,26,0.85); border: 1px solid rgba(201,168,76,0.3);
+  color: var(--gold); font-size: 1.1rem; line-height: 36px;
+  text-align: center; cursor: pointer; z-index: 1;
+  transition: background 0.2s;
+}
+#modalClose:hover { background: rgba(107,15,26,0.85); }
+
+/* ═══════════════════════════════
+   HERO
+═══════════════════════════════ */
+#hero {
+  position: relative; height: 100svh; min-height: 600px;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center; overflow: hidden; cursor: pointer;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: url('1956_hero_banner.png') center/cover no-repeat;
+  filter: brightness(0.28) sepia(0.4);
+  transform: scale(1.06); will-change: transform;
+  animation: heroZoom 20s ease-in-out infinite alternate;
+}
+@keyframes heroZoom { from { transform: scale(1.06); } to { transform: scale(1.14); } }
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom,
+    rgba(107,15,26,0.25) 0%, rgba(26,26,26,0.05) 40%, rgba(26,26,26,0.82) 100%);
+}
+
+/* play circle on hover */
+.hero-play-ring {
+  position: absolute; inset: 0; z-index: 3;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+.hero-play-circle {
+  width: 76px; height: 76px; border-radius: 50%;
+  background: rgba(201,168,76,0.15);
+  border: 2px solid rgba(201,168,76,0.5);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.3s, transform 0.3s;
+  backdrop-filter: blur(4px);
+}
+#hero:hover .hero-play-circle { opacity: 1; transform: scale(1.06); }
+.hero-play-circle svg { width: 30px; height: 30px; fill: var(--gold); margin-left: 5px; }
+
+/* particles */
+.particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.particle {
+  position: absolute; border-radius: 50%; opacity: 0; background: var(--gold);
+  animation: floatUp var(--dur, 8s) var(--delay, 0s) infinite ease-in;
+}
+@keyframes floatUp {
+  0%   { opacity: 0;   transform: translateY(0) translateX(0); }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.2; }
+  100% { opacity: 0;   transform: translateY(-100vh) translateX(var(--dx,20px)); }
+}
+
+.hero-content {
+  position: relative; z-index: 2; padding: 2rem; pointer-events: none;
+  animation: heroFadeIn 1.4s 0.3s both ease-out;
+}
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-year {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(5rem, 18vw, 13rem); font-weight: 600; line-height: 1;
+  color: transparent; -webkit-text-stroke: 1.5px var(--gold);
+  letter-spacing: 0.05em; opacity: 0.48;
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -55%);
+  user-select: none; pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: 'Oswald', sans-serif; font-size: 0.72rem;
+  letter-spacing: 0.35em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1.2rem; display: block;
+}
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5.5vw, 4rem); font-weight: 900; font-style: italic;
+  line-height: 1.1; color: var(--offwhite);
+  text-shadow: 0 4px 30px rgba(0,0,0,0.6); margin-bottom: 1rem;
+}
+.hero-subtitle {
+  font-family: 'EB Garamond', serif;
+  font-size: clamp(1rem, 2.2vw, 1.35rem); font-style: italic;
+  color: var(--cream); opacity: 0.9; max-width: 560px;
+  margin: 0 auto 1.8rem; line-height: 1.6;
+}
+.hero-video-hint {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  font-family: 'Oswald', sans-serif; font-size: 0.7rem;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); opacity: 0.8;
+}
+.hero-video-hint svg { width: 18px; height: 18px; }
+
+.hero-scroll {
+  position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  color: var(--gold); opacity: 0.65;
+  font-family: 'Oswald', sans-serif; font-size: 0.65rem; letter-spacing: 0.2em;
+  animation: bounce 2.5s infinite; text-decoration: none; z-index: 4;
+  pointer-events: all;
+}
+.hero-scroll svg { width: 20px; height: 20px; }
+@keyframes bounce {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(8px); }
+}
+
+/* ═══════════════════════════════
+   LAYOUT HELPERS
+═══════════════════════════════ */
+section { padding: 6rem 0; }
+.container { max-width: 1160px; margin: 0 auto; padding: 0 2rem; }
+.section-label {
+  font-family: 'Oswald', sans-serif; font-size: 0.68rem;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.8rem; display: block;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700;
+  color: var(--offwhite); line-height: 1.2; margin-bottom: 1.2rem;
+}
+.section-intro { font-size: 1.1rem; color: var(--cream); opacity: 0.85; max-width: 620px; line-height: 1.75; }
+.gold-line { width: 56px; height: 2px; background: linear-gradient(90deg, var(--gold), transparent); margin: 1.2rem 0 2.5rem; }
+.flag-stripe { height: 4px; background: linear-gradient(90deg, var(--burgundy) 33.3%, #fff 33.3% 66.6%, var(--burgundy) 66.6%); opacity: 0.7; }
+
+/* ═══════════════════════════════
+   TIMELINE
+═══════════════════════════════ */
+#timeline { background: var(--charcoal); }
+.timeline-header { margin-bottom: 4rem; }
+.timeline-rail { position: relative; }
+.timeline-rail::before {
+  content: ''; position: absolute; left: 36px; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--gold-dk) 10%, var(--gold-dk) 90%, transparent);
+}
+.milestone {
+  display: grid; grid-template-columns: 72px 1fr; gap: 0 2rem;
+  margin-bottom: 2.8rem;
+  opacity: 0; transform: translateX(-20px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.milestone.visible { opacity: 1; transform: translateX(0); }
+
+.milestone-dot { display: flex; flex-direction: column; align-items: center; padding-top: 0.3rem; }
+.milestone-dot .dot {
+  width: 13px; height: 13px; border-radius: 50%;
+  background: var(--charcoal-mid); border: 2px solid var(--gold-dk);
+  transition: background 0.3s, transform 0.3s; flex-shrink: 0; cursor: pointer;
+}
+.milestone.active .dot { background: var(--gold); transform: scale(1.45); }
+
+.milestone-card {
+  background: var(--charcoal-mid); border: 1px solid rgba(201,168,76,0.13);
+  border-left: 3px solid var(--burgundy); border-radius: 2px; overflow: hidden;
+  cursor: pointer; transition: border-color 0.3s, box-shadow 0.3s;
+}
+.milestone-card:hover,
+.milestone.active .milestone-card {
+  border-left-color: var(--gold);
+  box-shadow: 0 8px 36px rgba(0,0,0,0.38), 0 0 0 1px rgba(201,168,76,0.1);
+}
+.milestone-card-header {
+  padding: 1.1rem 1.4rem; display: flex;
+  align-items: flex-start; justify-content: space-between; gap: 1rem;
+}
+.milestone-meta { flex: 1; }
+.milestone-num { font-family: 'Oswald', sans-serif; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.25rem; }
+.milestone-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--offwhite); line-height: 1.3; margin-bottom: 0.3rem; }
+.milestone-date-loc { font-family: 'Oswald', sans-serif; font-size: 0.7rem; letter-spacing: 0.07em; color: var(--gold-dk); opacity: 0.85; }
+.milestone-toggle {
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 1px solid rgba(201,168,76,0.3);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background 0.2s, transform 0.3s;
+}
+.milestone.active .milestone-toggle { background: var(--gold); transform: rotate(45deg); }
+.milestone-toggle svg { width: 13px; height: 13px; fill: var(--gold); }
+.milestone.active .milestone-toggle svg { fill: var(--charcoal); }
+
+.milestone-body { max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1); }
+.milestone.active .milestone-body { max-height: 600px; }
+.milestone-body-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; padding: 0 1.4rem 1.4rem; }
+@media (max-width: 600px) { .milestone-body-inner { grid-template-columns: 1fr; } }
+
+.milestone-img {
+  aspect-ratio: 4/3; border-radius: 2px;
+  background: var(--charcoal-lt); overflow: hidden;
+  border: 1px solid rgba(201,168,76,0.1); position: relative;
+}
+.milestone-img::after {
+  content: '📷'; position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; opacity: 0.22; pointer-events: none;
+}
+.milestone-img img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  position: relative; z-index: 1; transition: transform 0.4s;
+}
+.milestone.active .milestone-img img { transform: scale(1.04); }
+.milestone-text { display: flex; align-items: center; }
+.milestone-text p { font-size: 1rem; line-height: 1.8; color: var(--cream); opacity: 0.9; }
+
+/* ═══════════════════════════════
+   QUOTE BAND
+═══════════════════════════════ */
+#quote-band {
+  padding: 4rem 0; background: var(--burgundy);
+  border-top: 1px solid var(--burgundy-lt); border-bottom: 1px solid var(--burgundy-lt);
+  text-align: center; position: relative; overflow: hidden;
+}
+#quote-band::before {
+  content: '"'; position: absolute; top: -1rem; left: 50%; transform: translateX(-50%);
+  font-family: 'Playfair Display', serif; font-size: 22rem;
+  color: rgba(255,255,255,0.03); line-height: 1; user-select: none; pointer-events: none;
+}
+.quote-text {
+  font-family: 'Playfair Display', serif; font-style: italic; color: var(--offwhite);
+  font-size: clamp(1.2rem, 3vw, 1.9rem); max-width: 780px;
+  margin: 0 auto 1rem; line-height: 1.55; position: relative;
+}
+.quote-attr { font-family: 'Oswald', sans-serif; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold-lt); opacity: 0.8; }
+
+/* ═══════════════════════════════
+   FURTHER MILESTONES
+═══════════════════════════════ */
+#further { background: linear-gradient(135deg, var(--charcoal-mid) 0%, #1E1008 100%); border-top: 1px solid rgba(201,168,76,0.15); }
+.further-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 3rem; }
+@media (max-width: 700px) { .further-grid { grid-template-columns: 1fr; } }
+.further-card {
+  background: rgba(26,26,26,0.6); border: 1px solid rgba(201,168,76,0.18);
+  border-radius: 2px; overflow: hidden;
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s;
+}
+.further-card.visible { opacity: 1; transform: translateY(0); }
+.further-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
+.further-img { aspect-ratio: 16/7; background: var(--charcoal-lt); position: relative; overflow: hidden; }
+.further-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.further-img-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(26,26,26,0.7), transparent 60%); }
+.further-img-year { position: absolute; bottom: 1rem; left: 1.2rem; font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 600; color: var(--gold); text-shadow: 0 2px 10px rgba(0,0,0,0.7); }
+.further-body { padding: 1.5rem; }
+.further-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; font-style: italic; color: var(--offwhite); margin-bottom: 0.8rem; line-height: 1.3; }
+.further-text { font-size: 0.97rem; line-height: 1.75; color: var(--cream); opacity: 0.87; }
+
+/* ═══════════════════════════════
+   FOOTER
+═══════════════════════════════ */
+footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding: 3.5rem 0 2rem; text-align: center; }
+.footer-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; font-style: italic; color: var(--gold); margin-bottom: 0.5rem; }
+.footer-sub { font-family: 'Oswald', sans-serif; font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--offwhite); opacity: 0.4; margin-bottom: 2rem; }
+.footer-divider { width: 1px; height: 40px; background: rgba(201,168,76,0.2); margin: 0 auto 2rem; }
+.footer-note { font-size: 0.85rem; color: var(--offwhite); opacity: 0.35; line-height: 1.7; }
+.footer-flags { font-size: 1.8rem; margin-bottom: 0.8rem; }
+
+/* ── UTILITIES ── */
+.fade-up { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 480px) {
+  .timeline-rail::before { left: 30px; }
+  .milestone { grid-template-columns: 60px 1fr; }
+}
 </style>
 </head>
 <body>
-<canvas id="c"></canvas>
+
+<!-- AUDIO – from root directory -->
+<audio id="bgAudio" src="sound.mp3" loop preload="auto"></audio>
+
+<div id="progress-bar"></div>
+
+<!-- ═══════════════════════════════ NAV ═══════════════════════════════ -->
+<nav id="navbar">
+  <div class="nav-logo">1956 · 70. Évforduló</div>
+
+  <ul class="nav-center" id="navLinks">
+    <li><a href="#hero">Kezdőlap</a></li>
+    <li><a href="#timeline">Eseménynaptár</a></li>
+    <li><a href="#further">Történelem</a></li>
+  </ul>
+
+  <div class="nav-right">
+    <button id="musicBtn" aria-label="Háttérzene be/ki" title="Háttérzene">
+      <div class="music-bars" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <span class="music-icon-play music-label">♪ Zene</span>
+      <span class="music-icon-pause music-label">❚❚ Szünet</span>
+    </button>
+    <div class="hamburger" id="hamburger" aria-label="Menü">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════ VIDEO MODAL ═══════════════════════════════ -->
+<div id="videoModal" role="dialog" aria-modal="true" aria-label="1956 – Videó">
+  <div class="modal-inner">
+    <button id="modalClose" aria-label="Bezárás">✕</button>
+    <!-- video src from root directory -->
+    <video id="heroVideo"
+      src="1956_hero_banner.mp4"
+      controls
+      preload="metadata"
+      playsinline
+      poster="1956_hero_banner.png">
+      A böngésző nem támogatja a videó lejátszást.
+    </video>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+<section id="hero" role="button" aria-label="Videó lejátszása" tabindex="0">
+  <!-- hero image from root directory -->
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="particles" id="particles"></div>
+  <div class="hero-year" aria-hidden="true">1956</div>
+
+  <div class="hero-content">
+    <span class="hero-eyebrow">70. Évforduló · 1956–2026</span>
+    <h1 class="hero-title">A Szabadság Népe</h1>
+    <p class="hero-subtitle">Ismerd meg a történetet, ahol a bátorság legyőzte a félelmet!</p>
+    <div class="hero-video-hint">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18a1 1 0 000-1.69L9.54 5.98A1 1 0 008 6.82z"/>
+      </svg>
+      Kattints a videóért
+    </div>
+  </div>
+
+  <div class="hero-play-ring" aria-hidden="true">
+    <div class="hero-play-circle">
+      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </div>
+  </div>
+
+  <a href="#timeline" class="hero-scroll" aria-label="Görgets le" onclick="event.stopPropagation()">
+    <span>Tovább</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 5v14M5 12l7 7 7-7"/>
+    </svg>
+  </a>
+</section>
+
+<div class="flag-stripe"></div>
+
+<!-- ═══════════════════════════════ TIMELINE ═══════════════════════════════ -->
+<section id="timeline">
+  <div class="container">
+    <div class="timeline-header fade-up">
+      <span class="section-label">A forradalom napjai</span>
+      <h2 class="section-title">10 Fontos Pillanat<br>1956-ból</h2>
+      <div class="gold-line"></div>
+      <p class="section-intro">1956 októberében a magyar nép – diákok, munkások, és közönséges emberek – összefogott a szabadságért. Kattints az eseményekre, és ismerd meg, mi történt!</p>
+    </div>
+
+    <div class="timeline-rail" id="timelineRail">
+
+      <div class="milestone" data-idx="0">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(0)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">01 · esemény</div>
+              <div class="milestone-title">A diákok gyűlése a Műegyetemen</div>
+              <div class="milestone-date-loc">1956. október 22. · Budapesti Műegyetem</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_01_muegyetem.png" alt="Diákok gyűlése a Műegyetemen" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Egyetemista fiatalok összeültek, mert megelégelték, hogy nem élhetnek szabadon. Írtak egy 16 pontból álló listát, amiben olyan dolgokat kértek, mint a szabad választások vagy hogy a szovjet katonák menjenek haza. Ez a bátor lépés indította el az eseményeket.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="1">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(1)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">02 · esemény</div>
+              <div class="milestone-title">A Bem-szoborhoz vonulás</div>
+              <div class="milestone-date-loc">1956. október 23. délután · Bem tér, Budapest</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_02_bem_ter.png" alt="Bem-szoborhoz vonulás" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Másnap a diákokhoz csatlakoztak a gyári munkások és az utcán sétáló emberek is. Hatalmas tömeg vonult a Bem-szoborhoz. Nem verekedni akartak, hanem békésen megmutatni, hogy a magyarok összefognak a szabadságért. Itt vágták ki először a címert a zászló közepéből, ami a forradalom jelképe lett.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="2">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(2)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">03 · esemény</div>
+              <div class="milestone-title">Tüntetés a Parlamentnél</div>
+              <div class="milestone-date-loc">1956. október 23. este · Kossuth tér (Parlament)</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_03_parlament.png" alt="Tüntetés a Parlamentnél" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Estére már százezer ember gyűlt össze a Parlament előtt. Sötét volt, ezért az emberek újságokat gyújtottak meg, hogy világítsanak. Nagy Imrét, a népszerű politikust kérték, hogy beszéljen hozzájuk. Mindenki érezte, hogy valami hatalmas dolog van készülőben.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="3">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(3)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">04 · esemény</div>
+              <div class="milestone-title">A Rádió ostroma és a Sztálin-szobor ledöntése</div>
+              <div class="milestone-date-loc">1956. október 23. éjszaka · Bródy Sándor utca és Felvonulási tér</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_04_radio_ostrom.png" alt="A Rádió ostroma" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>A tömeg a Magyar Rádióhoz ment, hogy beolvassák a követeléseiket, de az épületet védő fegyveresek lőni kezdtek a népre. Ekkor dördültek el az első lövések. Eközben a város másik pontján a dühös emberek ledöntötték az elnyomást jelképező óriási, nehéz Sztálin-szobrot.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="4">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(4)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">05 · esemény</div>
+              <div class="milestone-title">Megérkeznek az orosz tankok</div>
+              <div class="milestone-date-loc">1956. október 24. · Budapest utcái</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_05_orosz_tankok.png" alt="Orosz tankok Budapesten" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>A kormány vezetői megijedtek és behívták a szovjet (orosz) hadsereget. Hatalmas, félelmetes tankok gördültek be Budapest utcáira. A magyar emberek azonban nem futottak el: barikádokat (torlaszokat) építettek az utcákon, és megpróbálták megállítani őket.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="5">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(5)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">06 · esemény</div>
+              <div class="milestone-title">A véres csütörtök</div>
+              <div class="milestone-date-loc">1956. október 25. · Kossuth tér</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_06_veres_csutortok.png" alt="Véres csütörtök" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Egy békés, zászlókkal felvonuló tömegre a Parlamentnél hirtelen, figyelmeztetés nélkül lőni kezdtek a háztetőkről. Nagyon sok ártatlan ember veszítette életét ezen a napon. Ez a szörnyűség még jobban megerősítette a magyarokat abban, hogy nem adják fel a harcot.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="6">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(6)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">07 · esemény</div>
+              <div class="milestone-title">A Köztársaság téri csata és Mindszenty kiszabadulása</div>
+              <div class="milestone-date-loc">1956. október 30. · Köztársaság tér és Felsőpetény</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_07_koztarsasag_ter.png" alt="Köztársaság téri csata" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Súlyos harcok törtek ki a forradalmárok és a pártközpontot védő fegyveresek között. Ugyanebben az időszakban bátor katonák kiszabadították fogságából Mindszenty József bíborost, a magyar egyház fejét, akit a gonosz rendszer korábban igazságtalanul börtönzött be.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="7">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(7)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">08 · esemény</div>
+              <div class="milestone-title">Magyarország kikiáltja a semlegességet</div>
+              <div class="milestone-date-loc">1956. november 1. · Parlament, Budapest</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_08_semlegesseg.png" alt="Semlegességi nyilatkozat" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Nagy Imre, az új miniszterelnök bejelentette, hogy Magyarország kilép a szovjet katonai szövetségből, és semleges ország lesz – pontosan úgy, mint Ausztria. Ez azt jelentette volna, hogy végre békében, a saját szabályaink szerint élhetünk.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="8">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(8)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">09 · esemény</div>
+              <div class="milestone-title">A szovjet támadás – „Forgószél" hadművelet</div>
+              <div class="milestone-date-loc">1956. november 4. · Egész Magyarország</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_09_forgoszel.png" alt="Forgószél hadművelet" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Hajnalban a szovjet hadsereg hatalmas túlerővel, rengeteg tankkal megtámadta Budapestet és a nagyobb városokat. Nagy Imre a rádióban kért segítséget a világtól, de senki sem jött a segítségünkre. Elkezdődtek a legkeményebb harcok a szabadságért.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="9">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(9)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">10 · esemény</div>
+              <div class="milestone-title">A „Pesti Srácok" ellenállása és a megtorlás</div>
+              <div class="milestone-date-loc">1956. november–december · Corvin köz, Széna tér</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_10_pesti_sracok.png" alt="Pesti Srácok" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Fiatal fiúk és lányok – akiket Pesti Srácoknak neveztek – hetekig harcoltak a hatalmas tankok ellen a pesti utcákon. Bár a forradalmat végül leverték, és sokakat börtönbe zártak vagy elüldöztek, a Pesti Srácok bátorsága megmutatta a világnak, hogy a magyarokat nem lehet megtörni.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ QUOTE BAND ═══════════════════════════════ -->
+<div id="quote-band">
+  <blockquote class="container">
+    <p class="quote-text">„A magyar nép mindig is szerette a szabadságot. 1956-ban megmutatta a világnak, hogy a bátorság nem ismer korlátokat."</p>
+    <cite class="quote-attr">Az 1956-os forradalom emlékezete</cite>
+  </blockquote>
+</div>
+
+<!-- ═══════════════════════════════ FURTHER ═══════════════════════════════ -->
+<section id="further">
+  <div class="container">
+    <div class="fade-up">
+      <span class="section-label">Magyar történelem</span>
+      <h2 class="section-title">További Fontos<br>Mérföldkövek</h2>
+      <div class="gold-line"></div>
+      <p class="section-intro">A magyar nép mindig is szerette a szabadságot. 1956 nem az egyetlen alkalom volt, amikor fellázadtunk az elnyomás ellen. Itt van két másik nagyon hasonló és fontos esemény:</p>
+    </div>
+    <div class="further-grid">
+      <div class="further-card" style="transition-delay:.1s">
+        <div class="further-img">
+          <img src="history_1848.png" alt="1848-as forradalom" loading="lazy" decoding="async" onerror="this.style.display='none'">
+          <div class="further-img-overlay"></div>
+          <div class="further-img-year">1848</div>
+        </div>
+        <div class="further-body">
+          <h3 class="further-title">Március 15. – Az 1848-as Forradalom</h3>
+          <p class="further-text">Régebben, a dédnagyapáink idejében a magyarok a Habsburg Császárság ellen lázadtak fel. Petőfi Sándor és a márciusi ifjak a Nemzeti Múzeumnál gyűltek össze, és pont úgy, mint 1956-ban, ők is pontokba szedték, mit kíván a magyar nemzet – például a sajtó szabadságát.</p>
+        </div>
+      </div>
+      <div class="further-card" style="transition-delay:.25s">
+        <div class="further-img">
+          <img src="history_1989.png" alt="1989 rendszerváltás" loading="lazy" decoding="async" onerror="this.style.display='none'">
+          <div class="further-img-overlay"></div>
+          <div class="further-img-year">1989</div>
+        </div>
+        <div class="further-body">
+          <h3 class="further-title">Június 16. és Október 23. – A Rendszerváltás</h3>
+          <p class="further-text">Több mint 30 évvel 1956 után az emberek álma végül valóra vált. Nagy Imrét és a forradalom mártírjait ünnepélyesen újratemették, az orosz katonák elhagyták az országot, és 1989. október 23-án – pont a forradalom napján! – kikiáltották a szabad Magyar Köztársaságot.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="flag-stripe"></div>
+
+<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-flags" aria-hidden="true">🇭🇺</div>
+    <div class="footer-logo">1956 · A Szabadság Népe</div>
+    <div class="footer-sub">70. Évforduló · 1956–2026</div>
+    <div class="footer-divider"></div>
+    <p class="footer-note">
+      Ez az oldal a magyar forradalom és szabadságharc emlékét őrzi.<br>
+      Készült iskolások számára – hogy soha ne feledjük, mit tett a magyar nép a szabadságért.<br><br>
+      <em>„A magyarokat nem lehet megtörni."</em>
+    </p>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════ JS ═══════════════════════════════ -->
 <script>
-const canvas = document.getElementById('c');
-const ctx = canvas.getContext('2d');
+(function () {
+  'use strict';
 
-// Responsive sizing
-const BASE_W = 480, BASE_H = 680;
-let scale = 1;
-function resize() {
-  const sw = window.innerWidth / BASE_W;
-  const sh = window.innerHeight / BASE_H;
-  scale = Math.min(sw, sh, 2);
-  canvas.width = BASE_W;
-  canvas.height = BASE_H;
-  canvas.style.width = (BASE_W * scale) + 'px';
-  canvas.style.height = (BASE_H * scale) + 'px';
-}
-resize();
-window.addEventListener('resize', resize);
+  /* ─── AUDIO ─── */
+  const audio    = document.getElementById('bgAudio');
+  const musicBtn = document.getElementById('musicBtn');
+  let audioReady = false;
 
-// ── Constants ──────────────────────────────────────────
-const W = BASE_W, H = BASE_H;
-const GRAVITY = 0.38;
-const FLAP_POWER = -8.2;
-const PIPE_SPEED = 2.8;
-const PIPE_GAP = 138;
-const PIPE_INTERVAL = 95; // frames
-const GROUND_H = 24;
+  audio.volume = 0.5;
 
-const STATE = { MENU: 0, COUNTDOWN: 1, PLAY: 2, OVER: 3 };
-
-const PCONF = [
-  { name:'P1', color:'#00ffaa', dark:'#006644', key:'SPACE / Katt', codes:new Set(['Space']) },
-  { name:'P2', color:'#ff4488', dark:'#880033', key:'W',            codes:new Set(['KeyW']) },
-  { name:'P3', color:'#44aaff', dark:'#003388', key:'↑ FEL',        codes:new Set(['ArrowUp']) },
-  { name:'P4', color:'#ffcc00', dark:'#885500', key:'ENTER',         codes:new Set(['Enter','NumpadEnter']) },
-];
-
-// ── Stars ──────────────────────────────────────────────
-const STARS = Array.from({length:120}, () => ({
-  x: Math.random()*W, y: Math.random()*(H-GROUND_H),
-  r: Math.random()*1.6+0.2, ph: Math.random()*Math.PI*2
-}));
-
-// ── Nebula layers (parallax) ────────────────────────────
-const NEBULAE = Array.from({length:4}, () => ({
-  x: Math.random()*W, y: Math.random()*(H*0.7),
-  rx: 80+Math.random()*60, ry: 40+Math.random()*30,
-  hue: Math.random()*360, spd: 0.2+Math.random()*0.3
-}));
-
-// ── UFO class ──────────────────────────────────────────
-class UFO {
-  constructor(cfg, startX) {
-    this.cfg = cfg;
-    this.x = startX;
-    this.y = H/2;
-    this.vy = 0;
-    this.alive = true;
-    this.score = 0;
-    this.lightAngle = Math.random()*Math.PI*2;
-    this.flash = 0;       // death flash frames
-    this.deathY = 0;
-    this.deathVy = 0;
+  function tryPlay() {
+    return audio.play().then(() => {
+      musicBtn.classList.add('playing');
+      audioReady = true;
+    }).catch(() => {});
   }
-  flap() {
-    if (!this.alive) return;
-    this.vy = FLAP_POWER;
+
+  // Attempt autoplay immediately (works if page policy allows)
+  tryPlay();
+
+  // Fallback: start on first user interaction
+  function onInteract() {
+    if (!audioReady) tryPlay();
+    document.removeEventListener('click',      onInteract);
+    document.removeEventListener('keydown',    onInteract);
+    document.removeEventListener('touchstart', onInteract);
   }
-  update() {
-    if (!this.alive) {
-      // death animation
-      this.deathVy += GRAVITY;
-      this.deathY += this.deathVy;
-      this.flash = Math.max(0, this.flash - 1);
-      return;
+  document.addEventListener('click',      onInteract, { passive: true });
+  document.addEventListener('keydown',    onInteract, { passive: true });
+  document.addEventListener('touchstart', onInteract, { passive: true });
+
+  musicBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (audio.paused) {
+      audio.play().then(() => musicBtn.classList.add('playing')).catch(() => {});
+    } else {
+      audio.pause();
+      musicBtn.classList.remove('playing');
     }
-    this.vy += GRAVITY;
-    this.y += this.vy;
-    this.lightAngle += 0.09;
-    // hit ceiling or floor
-    if (this.y < 20 || this.y > H - GROUND_H - 18) this.die();
-  }
-  die() {
-    if (!this.alive) return;
-    this.alive = false;
-    this.deathY = this.y;
-    this.deathVy = -3;
-    this.flash = 18;
-  }
-  get drawY() { return this.alive ? this.y : this.deathY; }
-  get tilt() { return this.alive ? Math.max(-0.45, Math.min(0.5, this.vy * 0.06)) : 0.6; }
+  });
 
-  draw() {
-    const ry = this.drawY;
-    ctx.save();
-    ctx.translate(this.x, ry);
-    ctx.rotate(this.tilt);
-    if (!this.alive && this.flash % 2 === 0) { ctx.restore(); return; }
+  /* ─── VIDEO MODAL ─── */
+  const modal     = document.getElementById('videoModal');
+  const heroVideo = document.getElementById('heroVideo');
+  const heroEl    = document.getElementById('hero');
+  const closeBtn  = document.getElementById('modalClose');
 
-    const c = this.cfg.color;
-    ctx.shadowBlur = this.alive ? 18 : 6;
-    ctx.shadowColor = c;
-
-    // Saucer body
-    ctx.beginPath();
-    ctx.ellipse(0, 3, 26, 11, 0, 0, Math.PI*2);
-    const sg = ctx.createLinearGradient(0,-11,0,14);
-    sg.addColorStop(0,'#ccccee');
-    sg.addColorStop(0.4,'#9999bb');
-    sg.addColorStop(1,'#444466');
-    ctx.fillStyle = sg;
-    ctx.fill();
-    ctx.strokeStyle = c;
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-
-    // Rim ring highlight
-    ctx.beginPath();
-    ctx.ellipse(0, 3, 26, 11, 0, -0.3, 0.3);
-    ctx.strokeStyle = 'rgba(255,255,255,0.4)';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Dome
-    ctx.beginPath();
-    ctx.ellipse(0, -2, 13, 11, 0, Math.PI, Math.PI*2);
-    const dg = ctx.createRadialGradient(-3,-9,1, 0,-4,14);
-    dg.addColorStop(0,'rgba(220,255,255,0.92)');
-    dg.addColorStop(0.45,'rgba(100,200,255,0.55)');
-    dg.addColorStop(1,'rgba(40,80,200,0.2)');
-    ctx.fillStyle = dg;
-    ctx.fill();
-    ctx.strokeStyle = c;
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    // Alien inside dome
-    if (this.alive) {
-      ctx.save();
-      ctx.scale(0.55, 0.55);
-      // head
-      ctx.beginPath();
-      ctx.ellipse(0, -9, 7, 8, 0, 0, Math.PI*2);
-      ctx.fillStyle = '#88ffcc';
-      ctx.shadowBlur = 0;
-      ctx.fill();
-      // eyes
-      ctx.fillStyle = '#000';
-      ctx.beginPath(); ctx.ellipse(-3,-10,2,3,-.3,0,Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.ellipse(3,-10,2,3,.3,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle = 'white';
-      ctx.beginPath(); ctx.arc(-2.5,-10.5,.8,0,Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.arc(3.5,-10.5,.8,0,Math.PI*2); ctx.fill();
-      ctx.restore();
+  function openModal() {
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Pause background music while video plays
+    if (!audio.paused) {
+      audio.pause();
+      musicBtn.classList.remove('playing');
     }
+    heroVideo.play().catch(() => {});
+  }
+  function closeModal() {
+    heroVideo.pause();
+    heroVideo.currentTime = 0;
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
 
-    // Rotating lights
-    const LIGHT_COLS = ['#ff3333','#ffaa00','#33ff33','#3366ff','#ff33ff'];
-    for (let i=0;i<5;i++) {
-      const a = (i/5)*Math.PI*2 + this.lightAngle;
-      const lx = Math.cos(a)*17, ly = Math.sin(a)*5+3;
-      ctx.beginPath();
-      ctx.arc(lx, ly, 3.2, 0, Math.PI*2);
-      ctx.shadowColor = LIGHT_COLS[i];
-      ctx.shadowBlur = 10;
-      ctx.fillStyle = LIGHT_COLS[i];
-      ctx.fill();
+  heroEl.addEventListener('click', openModal);
+  heroEl.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(); }
+  });
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', function(e) { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+  /* ─── HAMBURGER ─── */
+  var hamburger = document.getElementById('hamburger');
+  var navLinks  = document.getElementById('navLinks');
+  hamburger.addEventListener('click', function(e) {
+    e.stopPropagation();
+    navLinks.classList.toggle('open');
+  });
+  navLinks.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() { navLinks.classList.remove('open'); });
+  });
+
+  /* ─── SCROLL PROGRESS (rAF throttled) ─── */
+  var bar     = document.getElementById('progress-bar');
+  var ticking = false;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      requestAnimationFrame(function() {
+        var h   = document.documentElement;
+        var pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+        bar.style.width = pct + '%';
+        ticking = false;
+      });
+      ticking = true;
     }
+  }, { passive: true });
 
-    // Beam (if alive & flying upward)
-    if (this.alive && this.vy < -2) {
-      ctx.beginPath();
-      ctx.moveTo(-6, 14); ctx.lineTo(6, 14);
-      ctx.lineTo(14, 44); ctx.lineTo(-14, 44);
-      ctx.closePath();
-      const bg = ctx.createLinearGradient(0,14,0,44);
-      bg.addColorStop(0, 'rgba(100,255,200,0.45)');
-      bg.addColorStop(1, 'rgba(100,255,200,0)');
-      ctx.fillStyle = bg;
-      ctx.shadowBlur = 0;
-      ctx.fill();
+  /* ─── PARTICLES ─── */
+  var pc   = document.getElementById('particles');
+  var frag = document.createDocumentFragment();
+  for (var i = 0; i < 28; i++) {
+    var p  = document.createElement('div');
+    var sz = (1 + Math.random() * 2).toFixed(1);
+    p.className = 'particle';
+    p.style.cssText =
+      'left:'    + (Math.random() * 100).toFixed(1) + '%;' +
+      'bottom:'  + (Math.random() * 25).toFixed(1)  + '%;' +
+      '--dur:'   + (6 + Math.random() * 10).toFixed(1) + 's;' +
+      '--delay:' + (Math.random() * 12).toFixed(1) + 's;' +
+      '--dx:'    + ((Math.random() - 0.5) * 60).toFixed(0) + 'px;' +
+      'width:'   + sz + 'px;height:' + sz + 'px';
+    frag.appendChild(p);
+  }
+  pc.appendChild(frag);
+
+  /* ─── TIMELINE ACCORDION ─── */
+  var activeIdx = null;
+  window.toggleMilestone = function(idx) {
+    var items = document.querySelectorAll('.milestone');
+    if (activeIdx === idx) {
+      items[idx].classList.remove('active');
+      activeIdx = null;
+    } else {
+      if (activeIdx !== null) items[activeIdx].classList.remove('active');
+      items[idx].classList.add('active');
+      activeIdx = idx;
+      setTimeout(function() {
+        var y = items[idx].getBoundingClientRect().top + window.scrollY - 90;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }, 80);
     }
+  };
 
-    // Label
-    ctx.shadowBlur = 6; ctx.shadowColor = c;
-    ctx.fillStyle = c;
-    ctx.font = 'bold 9px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(this.cfg.name, 0, 24);
-
-    ctx.restore();
-  }
-}
-
-// ── Pipe class ─────────────────────────────────────────
-class Pipe {
-  constructor() {
-    this.x = W + 10;
-    const minTop = 80, minBot = 80;
-    const maxTop = H - GROUND_H - PIPE_GAP - minBot;
-    this.topH = minTop + Math.random() * (maxTop - minTop);
-    this.botY = this.topH + PIPE_GAP;
-    this.botH = H - GROUND_H - this.botY;
-    this.w = 54;
-    this.passedSet = new Set(); // which UFOs have scored
-    this.hue = 120 + Math.random()*40 - 20; // green-ish
-  }
-  update() { this.x -= PIPE_SPEED; }
-  gone()    { return this.x + this.w < -10; }
-
-  drawPipe(x, y, w, h, cap, capTop) {
-    const g = ctx.createLinearGradient(x,0,x+w,0);
-    g.addColorStop(0,  `hsl(${this.hue},55%,18%)`);
-    g.addColorStop(0.3,`hsl(${this.hue},55%,38%)`);
-    g.addColorStop(0.6,`hsl(${this.hue},55%,25%)`);
-    g.addColorStop(1,  `hsl(${this.hue},55%,14%)`);
-    ctx.fillStyle = g;
-    ctx.fillRect(x, y, w, h);
-    // shine
-    ctx.fillStyle = 'rgba(255,255,255,0.07)';
-    ctx.fillRect(x+5, y, 8, h);
-    // cap
-    ctx.fillStyle = `hsl(${this.hue},55%,28%)`;
-    if (capTop) ctx.fillRect(x-5, y+h-20, w+10, 22);
-    else        ctx.fillRect(x-5, y, w+10, 22);
-    // cap highlight
-    ctx.fillStyle = `hsl(${this.hue},55%,48%)`;
-    if (capTop) ctx.fillRect(x-5, y+h-20, w+10, 4);
-    else        ctx.fillRect(x-5, y, w+10, 4);
-    // Alien markings
-    ctx.strokeStyle = `hsla(${this.hue+60},80%,60%,0.25)`;
-    ctx.lineWidth = 1;
-    for (let i=0;i<3;i++) {
-      ctx.beginPath();
-      ctx.moveTo(x+12+i*12, y+10); ctx.lineTo(x+12+i*12, y+h-10);
-      ctx.stroke();
-    }
-  }
-
-  draw() {
-    ctx.save();
-    ctx.shadowBlur = 8;
-    ctx.shadowColor = `hsl(${this.hue},80%,40%)`;
-    this.drawPipe(this.x, 0, this.w, this.topH, true, true);
-    this.drawPipe(this.x, this.botY, this.w, this.botH, true, false);
-    ctx.restore();
-  }
-
-  hits(ufo) {
-    if (!ufo.alive) return false;
-    const r = 15;
-    return (ufo.x+r > this.x && ufo.x-r < this.x+this.w) &&
-           (ufo.y-r < this.topH || ufo.y+r > this.botY);
-  }
-}
-
-// ── Particles ──────────────────────────────────────────
-const particles = [];
-function spawnParticles(x, y, color) {
-  for (let i=0;i<18;i++) {
-    const a = Math.random()*Math.PI*2;
-    const spd = 1+Math.random()*4;
-    particles.push({
-      x, y, vx: Math.cos(a)*spd, vy: Math.sin(a)*spd-2,
-      life: 1, color, r: 2+Math.random()*3
+  /* ─── INTERSECTION OBSERVER (scroll reveals) ─── */
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
     });
-  }
-}
-function updateParticles() {
-  for (let i=particles.length-1;i>=0;i--) {
-    const p = particles[i];
-    p.x += p.vx; p.y += p.vy; p.vy += 0.15;
-    p.life -= 0.025;
-    if (p.life <= 0) particles.splice(i,1);
-  }
-}
-function drawParticles() {
-  particles.forEach(p => {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-    ctx.fillStyle = p.color.replace(')', `,${p.life})`).replace('rgb','rgba');
-    ctx.shadowColor = p.color;
-    ctx.shadowBlur = 8;
-    ctx.fill();
+  }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+  var milestones = document.querySelectorAll('.milestone');
+  milestones.forEach(function(el, i) {
+    el.style.transitionDelay = (i * 0.055) + 's';
+    io.observe(el);
   });
-  ctx.shadowBlur = 0;
-}
+  document.querySelectorAll('.further-card, .fade-up').forEach(function(el) { io.observe(el); });
 
-// ── Background ─────────────────────────────────────────
-function drawBg(frame) {
-  // space gradient
-  const bg = ctx.createLinearGradient(0,0,0,H);
-  bg.addColorStop(0,'#000010');
-  bg.addColorStop(0.6,'#00002a');
-  bg.addColorStop(1,'#000018');
-  ctx.fillStyle = bg;
-  ctx.fillRect(0,0,W,H);
-
-  // nebulae
-  NEBULAE.forEach(n => {
-    n.x -= n.spd;
-    if (n.x + n.rx < 0) n.x = W + n.rx;
-    ctx.save();
-    ctx.translate(n.x, n.y);
-    const ng = ctx.createRadialGradient(0,0,0, 0,0,Math.max(n.rx,n.ry));
-    ng.addColorStop(0, `hsla(${n.hue},70%,30%,0.13)`);
-    ng.addColorStop(1, 'transparent');
-    ctx.fillStyle = ng;
-    ctx.scale(1, n.ry/n.rx);
-    ctx.beginPath();
-    ctx.arc(0,0,n.rx,0,Math.PI*2);
-    ctx.fill();
-    ctx.restore();
-  });
-
-  // stars
-  STARS.forEach(s => {
-    s.ph += 0.015;
-    const alpha = 0.4 + 0.6*Math.abs(Math.sin(s.ph));
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
-    ctx.fill();
-  });
-
-  // ground
-  const gy = H - GROUND_H;
-  const gg = ctx.createLinearGradient(0,gy,0,H);
-  gg.addColorStop(0,'#1a1a3a');
-  gg.addColorStop(1,'#0a0a1a');
-  ctx.fillStyle = gg;
-  ctx.fillRect(0, gy, W, GROUND_H);
-  // ground line
-  ctx.strokeStyle = '#3a3a6a';
-  ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke();
-}
-
-// ── Game state ─────────────────────────────────────────
-let state = STATE.MENU;
-let ufos = [], pipes = [];
-let frame = 0;
-let numPlayers = 1;
-let countdown = 3;
-let countdownTimer = 0;
-let bestScores = [0,0,0,0];
-
-function initGame() {
-  ufos = [];
-  pipes = [];
-  frame = 0;
-  particles.length = 0;
-  for (let i=0;i<numPlayers;i++) {
-    ufos.push(new UFO(PCONF[i], 100 + i * 28));
-  }
-  countdown = 3;
-  countdownTimer = 0;
-  state = STATE.COUNTDOWN;
-}
-
-function flap(pidx) {
-  if (state === STATE.COUNTDOWN) {
-    // early flap queued – will fire on start
-    if (ufos[pidx]) ufos[pidx]._earlyFlap = true;
-    return;
-  }
-  if (state === STATE.PLAY && ufos[pidx]) ufos[pidx].flap();
-  if (state === STATE.MENU) {
-    initGame();
-  }
-  if (state === STATE.OVER && pidx === 0) {
-    state = STATE.MENU;
-  }
-}
-
-// ── Draw menu ──────────────────────────────────────────
-let menuFrame = 0;
-const menuUFOs = PCONF.map((c,i) => {
-  const u = new UFO(c, 60 + i*120);
-  u.y = 160 + Math.sin(i*1.5)*20;
-  return u;
-});
-
-function drawMenu() {
-  menuFrame++;
-
-  // Animate demo UFOs
-  menuUFOs.forEach((u,i) => {
-    u.lightAngle += 0.09;
-    u.y = 165 + Math.sin((menuFrame*0.03)+i*1.5)*22;
-    u.vy = Math.cos((menuFrame*0.03)+i*1.5)*0.6;
-    if (i < numPlayers) u.alive = true;
-    else u.alive = false;
-    if (i < numPlayers) u.draw();
-  });
-
-  // Title
-  ctx.save();
-  const pulse = 0.97 + 0.03*Math.sin(menuFrame*0.05);
-  ctx.translate(W/2, 72); ctx.scale(pulse,pulse);
-  ctx.shadowBlur = 30; ctx.shadowColor = '#00ffcc';
-  ctx.fillStyle = '#00ffcc';
-  ctx.font = 'bold 48px Arial';
-  ctx.textAlign = 'center';
-  ctx.fillText('FLAPPY UFO', 0, 0);
-  ctx.shadowBlur = 12; ctx.shadowColor = '#8888ff';
-  ctx.fillStyle = '#aaaaff';
-  ctx.font = '17px Arial';
-  ctx.fillText('🌌  Multiplayer Edition  🌌', 0, 30);
-  ctx.restore();
-
-  // Player count selector
-  ctx.fillStyle = 'rgba(0,0,0,0.45)';
-  ctx.beginPath(); ctx.roundRect(W/2-160, 215, 320, 70, 14); ctx.fill();
-  ctx.fillStyle = '#aaaaff'; ctx.shadowBlur=0;
-  ctx.font = '16px Arial'; ctx.textAlign='center';
-  ctx.fillText('Játékosok száma:', W/2, 236);
-
-  for (let i=1;i<=4;i++) {
-    const bx = W/2 + (i-2.5)*66;
-    const by = 255;
-    const sel = (i === numPlayers);
-    ctx.beginPath(); ctx.roundRect(bx-20, by-20, 40, 40, 8);
-    ctx.shadowBlur = sel ? 14 : 0;
-    ctx.shadowColor = PCONF[i-1].color;
-    ctx.fillStyle = sel ? PCONF[i-1].color : '#222244';
-    ctx.fill();
-    ctx.strokeStyle = PCONF[i-1].color;
-    ctx.lineWidth = 1.5; ctx.stroke();
-    ctx.fillStyle = sel ? '#000' : PCONF[i-1].color;
-    ctx.font = `bold 20px Arial`;
-    ctx.fillText(i, bx, by+7);
-  }
-
-  // Controls
-  ctx.fillStyle = 'rgba(0,0,0,0.4)';
-  ctx.beginPath(); ctx.roundRect(W/2-160, 300, 320, 24+numPlayers*27, 12); ctx.fill();
-  ctx.fillStyle = '#8888cc'; ctx.shadowBlur=0;
-  ctx.font = '14px Arial'; ctx.textAlign='center';
-  ctx.fillText('Irányítás:', W/2, 318);
-  for (let i=0;i<numPlayers;i++) {
-    const c = PCONF[i];
-    ctx.shadowBlur=4; ctx.shadowColor=c.color;
-    ctx.fillStyle=c.color;
-    ctx.font=`bold 14px Arial`;
-    ctx.fillText(`${c.name}  →  ${c.key}`, W/2, 341+i*27);
-  }
-  ctx.shadowBlur=0;
-
-  // Start button
-  const sy = 316 + numPlayers*27 + 22;
-  const btnPulse = 0.95+0.05*Math.sin(menuFrame*0.08);
-  ctx.save();
-  ctx.translate(W/2, sy+22); ctx.scale(btnPulse,btnPulse);
-  ctx.shadowBlur=18; ctx.shadowColor='#00ffaa';
-  ctx.fillStyle='#00ffaa';
-  ctx.beginPath(); ctx.roundRect(-90,-22,180,44,12); ctx.fill();
-  ctx.fillStyle='#000';
-  ctx.font='bold 20px Arial';
-  ctx.fillText('▶  INDÍTÁS!', 0, 7);
-  ctx.restore();
-
-  ctx.fillStyle='#445566'; ctx.font='12px Arial';
-  ctx.fillText('[ 1 – 4 ] billentyű: játékosok  |  SPACE vagy kattintás: indítás', W/2, sy+56);
-
-  // store button bounds for click
-  menuUFOs._startBtn = { x:W/2-90, y:sy, w:180, h:44 };
-  menuUFOs._btnY = { counts: PCONF.map((_,i)=>({ x:W/2+(i-1.5)*66-20, y:235, w:40, h:40 })) };
-}
-
-// ── Draw HUD ───────────────────────────────────────────
-function drawHUD() {
-  ufos.forEach((u,i) => {
-    ctx.shadowBlur = u.alive ? 8 : 0;
-    ctx.shadowColor = u.cfg.color;
-    ctx.fillStyle = u.alive ? u.cfg.color : 'rgba(150,150,150,0.4)';
-    ctx.font = `bold 20px Arial`;
-    ctx.textAlign = 'left';
-    ctx.fillText(`${u.cfg.name} ${u.score}`, 14 + i*110, 36);
-  });
-  ctx.shadowBlur=0;
-}
-
-// ── Draw game over ─────────────────────────────────────
-function drawGameOver() {
-  ctx.fillStyle='rgba(0,0,5,0.72)';
-  ctx.fillRect(0,0,W,H);
-
-  ctx.save();
-  ctx.shadowBlur=25; ctx.shadowColor='#ff4455';
-  ctx.fillStyle='#ff4455';
-  ctx.font='bold 46px Arial'; ctx.textAlign='center';
-  ctx.fillText('JÁTÉK VÉGE', W/2, 180);
-  ctx.restore();
-
-  const sorted = [...ufos].sort((a,b)=>b.score-a.score);
-  ctx.shadowBlur=10; ctx.shadowColor='#ffdd00';
-  ctx.fillStyle='#ffdd44';
-  ctx.font='bold 20px Arial'; ctx.textAlign='center';
-  ctx.fillText('Végeredmény', W/2, 235);
-
-  const medals = ['🥇','🥈','🥉','  '];
-  sorted.forEach((u,i) => {
-    ctx.shadowBlur=6; ctx.shadowColor=u.cfg.color;
-    ctx.fillStyle = u.cfg.color;
-    ctx.font = `${i===0?'bold 22px':'18px'} Arial`;
-    ctx.fillText(`${medals[Math.min(i,3)]}  ${u.cfg.name}: ${u.score} pont`, W/2, 272+i*36);
-    // update best
-    const pi = PCONF.indexOf(u.cfg);
-    if (u.score > bestScores[pi]) bestScores[pi] = u.score;
-  });
-
-  if (numPlayers > 1) {
-    ctx.fillStyle='#555577'; ctx.font='13px Arial';
-    ctx.fillText('Legjobb pontszámok:', W/2, 420);
-    ufos.forEach((u,i) => {
-      ctx.fillStyle=u.cfg.color+'bb';
-      ctx.fillText(`${u.cfg.name}: ${bestScores[i]}`, W/2+(i-ufos.length/2+0.5)*90, 440);
-    });
-  }
-
-  // blink restart
-  if (Math.floor(Date.now()/600)%2===0) {
-    ctx.shadowBlur=12; ctx.shadowColor='#00ffaa';
-    ctx.fillStyle='#00ffaa';
-    ctx.font='bold 18px Arial';
-    ctx.fillText('SPACE / Kattintás → Főmenü', W/2, 490);
-  }
-  ctx.shadowBlur=0;
-}
-
-// ── Countdown ─────────────────────────────────────────
-function drawCountdown() {
-  const num = countdown;
-  const progress = 1 - (countdownTimer % 60)/60;
-  ctx.save();
-  ctx.translate(W/2, H/2-40);
-  const sc = 0.6 + 0.6*progress;
-  ctx.scale(sc,sc);
-  ctx.globalAlpha = progress;
-  ctx.shadowBlur=40; ctx.shadowColor='#ffdd00';
-  ctx.fillStyle='#ffdd00';
-  ctx.font='bold 110px Arial'; ctx.textAlign='center';
-  ctx.fillText(num === 0 ? 'RAJT!' : num, 0, 40);
-  ctx.restore();
-
-  ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.font='15px Arial'; ctx.textAlign='center';
-  ctx.fillText('Készen állsz?', W/2, H/2+55);
-}
-
-// ── Main loop ──────────────────────────────────────────
-let lastTime = 0;
-function loop(ts) {
-  requestAnimationFrame(loop);
-  drawBg(frame);
-
-  if (state === STATE.MENU) {
-    drawMenu();
-  }
-  else if (state === STATE.COUNTDOWN) {
-    countdownTimer++;
-    // draw UFOs in position
-    ufos.forEach(u => u.draw());
-    drawCountdown();
-
-    if (countdownTimer >= 60) {
-      countdown--;
-      countdownTimer = 0;
-      if (countdown < 0) {
-        // start!
-        state = STATE.PLAY;
-        ufos.forEach(u => { if (u._earlyFlap) { u.flap(); u._earlyFlap=false; } });
-      }
-    }
-  }
-  else if (state === STATE.PLAY) {
-    frame++;
-
-    // spawn pipes
-    if (frame % PIPE_INTERVAL === 0) pipes.push(new Pipe());
-
-    // update & draw pipes
-    pipes = pipes.filter(p=>!p.gone());
-    pipes.forEach(p => {
-      p.update();
-      p.draw();
-      // collisions
-      ufos.forEach(u => {
-        if (p.hits(u)) {
-          spawnParticles(u.x, u.y, u.cfg.color);
-          u.die();
+  /* ─── LAZY IMAGE POLYFILL (for older browsers) ─── */
+  if (!('loading' in HTMLImageElement.prototype)) {
+    var imgObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          var img = e.target;
+          if (img.dataset.src) img.src = img.dataset.src;
+          imgObs.unobserve(img);
         }
       });
-      // scoring – each UFO scores individually
-      ufos.forEach(u => {
-        if (!p.passedSet.has(u) && p.x + p.w < u.x) {
-          p.passedSet.add(u);
-          if (u.alive) u.score++;
-        }
-      });
-    });
-
-    updateParticles();
-    drawParticles();
-
-    ufos.forEach(u => { u.update(); u.draw(); });
-
-    drawHUD();
-
-    if (ufos.every(u=>!u.alive)) state = STATE.OVER;
+    }, { rootMargin: '300px' });
+    document.querySelectorAll('img[loading="lazy"]').forEach(function(img) { imgObs.observe(img); });
   }
-  else if (state === STATE.OVER) {
-    pipes.forEach(p=>p.draw());
-    updateParticles(); drawParticles();
-    ufos.forEach(u=>{ u.update(); u.draw(); });
-    drawHUD();
-    drawGameOver();
-  }
-}
-requestAnimationFrame(loop);
 
-// ── Input ──────────────────────────────────────────────
-document.addEventListener('keydown', e => {
-  // Player controls
-  for (let i=0;i<PCONF.length;i++) {
-    if (PCONF[i].codes.has(e.code)) {
-      if (e.code==='Space') e.preventDefault();
-      if (e.code==='ArrowUp') e.preventDefault();
-      flap(i);
-      return;
-    }
-  }
-  // num keys for player count in menu
-  if (state === STATE.MENU && e.key>='1' && e.key<='4') {
-    numPlayers = parseInt(e.key);
-  }
-  if (state === STATE.OVER && e.code === 'Escape') state = STATE.MENU;
-});
-
-canvas.addEventListener('pointerdown', e => {
-  e.preventDefault();
-  const rect = canvas.getBoundingClientRect();
-  const mx = (e.clientX - rect.left) / scale;
-  const my = (e.clientY - rect.top) / scale;
-
-  if (state === STATE.MENU) {
-    // Check player count buttons
-    for (let i=1;i<=4;i++) {
-      const bx = W/2 + (i-2.5)*66;
-      if (mx>=bx-20 && mx<=bx+20 && my>=235 && my<=275) {
-        numPlayers=i; return;
-      }
-    }
-    // Start button – anywhere else
-    initGame();
-  } else {
-    flap(0);
-  }
-});
-
-// Prevent scroll on arrow keys
-window.addEventListener('keydown', e => {
-  if (['ArrowUp','ArrowDown','Space'].includes(e.code)) e.preventDefault();
-}, { passive:false });
+})();
 </script>
 </body>
 </html>
