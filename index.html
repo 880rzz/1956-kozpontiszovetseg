@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1956 – A Szabadság Népe | 70. Évforduló</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Oswald:wght@300;400;600&display=swap" rel="stylesheet">
+
+<!-- Preload critical assets from root directory -->
+<link rel="preload" as="image" href="1956_hero_banner.png" fetchpriority="high">
+<link rel="preload" as="audio" href="sound.mp3" type="audio/mpeg">
+
+<style>
+:root {
+  --burgundy:     #6B0F1A;
+  --burgundy-mid: #8B1A2A;
+  --burgundy-lt:  #A83244;
+  --charcoal:     #1A1A1A;
+  --charcoal-mid: #2C2C2C;
+  --charcoal-lt:  #3D3D3D;
+  --offwhite:     #F5F0E8;
+  --cream:        #EDE5D4;
+  --gold:         #C9A84C;
+  --gold-lt:      #E0C47A;
+  --gold-dk:      #9A7A2E;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--charcoal);
+  color: var(--offwhite);
+  font-family: 'EB Garamond', Georgia, serif;
+  overflow-x: hidden;
+}
+
+/* ── SCROLL PROGRESS ── */
+#progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--burgundy-lt));
+  width: 0%; z-index: 9999; transition: width 0.1s linear;
+}
+
+/* ═══════════════════════════════
+   NAV
+═══════════════════════════════ */
+nav {
+  position: fixed; top: 3px; left: 0; right: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.75rem 2rem;
+  background: rgba(26,26,26,0.88);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+}
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--gold); letter-spacing: 0.05em; flex-shrink: 0;
+}
+.nav-center { display: flex; gap: 1.8rem; list-style: none; }
+.nav-center a {
+  font-family: 'Oswald', sans-serif; font-size: 0.73rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--cream); text-decoration: none;
+  opacity: 0.8; transition: opacity 0.2s, color 0.2s;
+}
+.nav-center a:hover { opacity: 1; color: var(--gold); }
+
+/* MUSIC BUTTON */
+.nav-right { display: flex; align-items: center; gap: 0.8rem; }
+
+#musicBtn {
+  display: flex; align-items: center; gap: 0.45rem;
+  background: none; border: 1px solid rgba(201,168,76,0.4);
+  border-radius: 20px; padding: 0.38rem 0.9rem;
+  cursor: pointer; color: var(--gold);
+  font-family: 'Oswald', sans-serif; font-size: 0.68rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  transition: background 0.25s, border-color 0.25s;
+  white-space: nowrap;
+}
+#musicBtn:hover { background: rgba(201,168,76,0.1); border-color: var(--gold); }
+#musicBtn.playing { background: rgba(201,168,76,0.14); border-color: var(--gold); }
+
+.music-bars { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+.music-bars span {
+  width: 2px; background: var(--gold); border-radius: 1px; display: block;
+}
+.music-bars span:nth-child(1) { height: 6px;  }
+.music-bars span:nth-child(2) { height: 12px; }
+.music-bars span:nth-child(3) { height: 8px;  }
+.music-bars span:nth-child(4) { height: 10px; }
+
+#musicBtn.playing .music-bars span { animation: barBounce 0.8s ease-in-out infinite alternate; }
+#musicBtn.playing .music-bars span:nth-child(1) { animation-delay: 0s; }
+#musicBtn.playing .music-bars span:nth-child(2) { animation-delay: 0.15s; }
+#musicBtn.playing .music-bars span:nth-child(3) { animation-delay: 0.3s; }
+#musicBtn.playing .music-bars span:nth-child(4) { animation-delay: 0.1s; }
+@keyframes barBounce {
+  from { transform: scaleY(0.25); }
+  to   { transform: scaleY(1); }
+}
+
+.music-icon-pause { display: none; }
+#musicBtn.playing .music-icon-play  { display: none; }
+#musicBtn.playing .music-icon-pause { display: inline; }
+
+/* hamburger */
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+.hamburger span { width: 22px; height: 2px; background: var(--gold); display: block; }
+
+@media (max-width: 760px) {
+  .hamburger { display: flex; }
+  .nav-center {
+    display: none; flex-direction: column; gap: 1.2rem;
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: rgba(22,22,22,0.97); padding: 2rem;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+  .nav-center.open { display: flex; }
+  .music-label { display: none; }
+  #musicBtn { padding: 0.38rem 0.65rem; }
+}
+
+/* ═══════════════════════════════
+   VIDEO MODAL
+═══════════════════════════════ */
+#videoModal {
+  display: none; position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0,0,0,0.93);
+  align-items: center; justify-content: center;
+}
+#videoModal.open { display: flex; animation: modalIn 0.3s ease; }
+@keyframes modalIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-inner {
+  position: relative; width: 90vw; max-width: 960px;
+  border: 1px solid rgba(201,168,76,0.25); border-radius: 2px;
+  overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.75);
+}
+.modal-inner video {
+  width: 100%; display: block; aspect-ratio: 16/9; background: #000;
+}
+#modalClose {
+  position: absolute; top: 0.75rem; right: 0.75rem;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(26,26,26,0.85); border: 1px solid rgba(201,168,76,0.3);
+  color: var(--gold); font-size: 1.1rem; line-height: 36px;
+  text-align: center; cursor: pointer; z-index: 1;
+  transition: background 0.2s;
+}
+#modalClose:hover { background: rgba(107,15,26,0.85); }
+
+/* ═══════════════════════════════
+   HERO
+═══════════════════════════════ */
+#hero {
+  position: relative; height: 100svh; min-height: 600px;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center; overflow: hidden; cursor: pointer;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: url('1956_hero_banner.png') center/cover no-repeat;
+  filter: brightness(0.28) sepia(0.4);
+  transform: scale(1.06); will-change: transform;
+  animation: heroZoom 20s ease-in-out infinite alternate;
+}
+@keyframes heroZoom { from { transform: scale(1.06); } to { transform: scale(1.14); } }
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom,
+    rgba(107,15,26,0.25) 0%, rgba(26,26,26,0.05) 40%, rgba(26,26,26,0.82) 100%);
+}
+
+/* play circle on hover */
+.hero-play-ring {
+  position: absolute; inset: 0; z-index: 3;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+.hero-play-circle {
+  width: 76px; height: 76px; border-radius: 50%;
+  background: rgba(201,168,76,0.15);
+  border: 2px solid rgba(201,168,76,0.5);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.3s, transform 0.3s;
+  backdrop-filter: blur(4px);
+}
+#hero:hover .hero-play-circle { opacity: 1; transform: scale(1.06); }
+.hero-play-circle svg { width: 30px; height: 30px; fill: var(--gold); margin-left: 5px; }
+
+/* particles */
+.particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.particle {
+  position: absolute; border-radius: 50%; opacity: 0; background: var(--gold);
+  animation: floatUp var(--dur, 8s) var(--delay, 0s) infinite ease-in;
+}
+@keyframes floatUp {
+  0%   { opacity: 0;   transform: translateY(0) translateX(0); }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.2; }
+  100% { opacity: 0;   transform: translateY(-100vh) translateX(var(--dx,20px)); }
+}
+
+.hero-content {
+  position: relative; z-index: 2; padding: 2rem; pointer-events: none;
+  animation: heroFadeIn 1.4s 0.3s both ease-out;
+}
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-year {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(5rem, 18vw, 13rem); font-weight: 600; line-height: 1;
+  color: transparent; -webkit-text-stroke: 1.5px var(--gold);
+  letter-spacing: 0.05em; opacity: 0.48;
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -55%);
+  user-select: none; pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: 'Oswald', sans-serif; font-size: 0.72rem;
+  letter-spacing: 0.35em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1.2rem; display: block;
+}
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5.5vw, 4rem); font-weight: 900; font-style: italic;
+  line-height: 1.1; color: var(--offwhite);
+  text-shadow: 0 4px 30px rgba(0,0,0,0.6); margin-bottom: 1rem;
+}
+.hero-subtitle {
+  font-family: 'EB Garamond', serif;
+  font-size: clamp(1rem, 2.2vw, 1.35rem); font-style: italic;
+  color: var(--cream); opacity: 0.9; max-width: 560px;
+  margin: 0 auto 1.8rem; line-height: 1.6;
+}
+.hero-video-hint {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  font-family: 'Oswald', sans-serif; font-size: 0.7rem;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); opacity: 0.8;
+}
+.hero-video-hint svg { width: 18px; height: 18px; }
+
+.hero-scroll {
+  position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  color: var(--gold); opacity: 0.65;
+  font-family: 'Oswald', sans-serif; font-size: 0.65rem; letter-spacing: 0.2em;
+  animation: bounce 2.5s infinite; text-decoration: none; z-index: 4;
+  pointer-events: all;
+}
+.hero-scroll svg { width: 20px; height: 20px; }
+@keyframes bounce {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(8px); }
+}
+
+/* ═══════════════════════════════
+   LAYOUT HELPERS
+═══════════════════════════════ */
+section { padding: 6rem 0; }
+.container { max-width: 1160px; margin: 0 auto; padding: 0 2rem; }
+.section-label {
+  font-family: 'Oswald', sans-serif; font-size: 0.68rem;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.8rem; display: block;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700;
+  color: var(--offwhite); line-height: 1.2; margin-bottom: 1.2rem;
+}
+.section-intro { font-size: 1.1rem; color: var(--cream); opacity: 0.85; max-width: 620px; line-height: 1.75; }
+.gold-line { width: 56px; height: 2px; background: linear-gradient(90deg, var(--gold), transparent); margin: 1.2rem 0 2.5rem; }
+.flag-stripe { height: 4px; background: linear-gradient(90deg, var(--burgundy) 33.3%, #fff 33.3% 66.6%, var(--burgundy) 66.6%); opacity: 0.7; }
+
+/* ═══════════════════════════════
+   TIMELINE
+═══════════════════════════════ */
+#timeline { background: var(--charcoal); }
+.timeline-header { margin-bottom: 4rem; }
+.timeline-rail { position: relative; }
+.timeline-rail::before {
+  content: ''; position: absolute; left: 36px; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--gold-dk) 10%, var(--gold-dk) 90%, transparent);
+}
+.milestone {
+  display: grid; grid-template-columns: 72px 1fr; gap: 0 2rem;
+  margin-bottom: 2.8rem;
+  opacity: 0; transform: translateX(-20px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.milestone.visible { opacity: 1; transform: translateX(0); }
+
+.milestone-dot { display: flex; flex-direction: column; align-items: center; padding-top: 0.3rem; }
+.milestone-dot .dot {
+  width: 13px; height: 13px; border-radius: 50%;
+  background: var(--charcoal-mid); border: 2px solid var(--gold-dk);
+  transition: background 0.3s, transform 0.3s; flex-shrink: 0; cursor: pointer;
+}
+.milestone.active .dot { background: var(--gold); transform: scale(1.45); }
+
+.milestone-card {
+  background: var(--charcoal-mid); border: 1px solid rgba(201,168,76,0.13);
+  border-left: 3px solid var(--burgundy); border-radius: 2px; overflow: hidden;
+  cursor: pointer; transition: border-color 0.3s, box-shadow 0.3s;
+}
+.milestone-card:hover,
+.milestone.active .milestone-card {
+  border-left-color: var(--gold);
+  box-shadow: 0 8px 36px rgba(0,0,0,0.38), 0 0 0 1px rgba(201,168,76,0.1);
+}
+.milestone-card-header {
+  padding: 1.1rem 1.4rem; display: flex;
+  align-items: flex-start; justify-content: space-between; gap: 1rem;
+}
+.milestone-meta { flex: 1; }
+.milestone-num { font-family: 'Oswald', sans-serif; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.25rem; }
+.milestone-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--offwhite); line-height: 1.3; margin-bottom: 0.3rem; }
+.milestone-date-loc { font-family: 'Oswald', sans-serif; font-size: 0.7rem; letter-spacing: 0.07em; color: var(--gold-dk); opacity: 0.85; }
+.milestone-toggle {
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 1px solid rgba(201,168,76,0.3);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background 0.2s, transform 0.3s;
+}
+.milestone.active .milestone-toggle { background: var(--gold); transform: rotate(45deg); }
+.milestone-toggle svg { width: 13px; height: 13px; fill: var(--gold); }
+.milestone.active .milestone-toggle svg { fill: var(--charcoal); }
+
+.milestone-body { max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1); }
+.milestone.active .milestone-body { max-height: 600px; }
+.milestone-body-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; padding: 0 1.4rem 1.4rem; }
+@media (max-width: 600px) { .milestone-body-inner { grid-template-columns: 1fr; } }
+
+.milestone-img {
+  aspect-ratio: 4/3; border-radius: 2px;
+  background: var(--charcoal-lt); overflow: hidden;
+  border: 1px solid rgba(201,168,76,0.1); position: relative;
+}
+.milestone-img::after {
+  content: '📷'; position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; opacity: 0.22; pointer-events: none;
+}
+.milestone-img img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  position: relative; z-index: 1; transition: transform 0.4s;
+}
+.milestone.active .milestone-img img { transform: scale(1.04); }
+.milestone-text { display: flex; align-items: center; }
+.milestone-text p { font-size: 1rem; line-height: 1.8; color: var(--cream); opacity: 0.9; }
+
+/* ═══════════════════════════════
+   QUOTE BAND
+═══════════════════════════════ */
+#quote-band {
+  padding: 4rem 0; background: var(--burgundy);
+  border-top: 1px solid var(--burgundy-lt); border-bottom: 1px solid var(--burgundy-lt);
+  text-align: center; position: relative; overflow: hidden;
+}
+#quote-band::before {
+  content: '"'; position: absolute; top: -1rem; left: 50%; transform: translateX(-50%);
+  font-family: 'Playfair Display', serif; font-size: 22rem;
+  color: rgba(255,255,255,0.03); line-height: 1; user-select: none; pointer-events: none;
+}
+.quote-text {
+  font-family: 'Playfair Display', serif; font-style: italic; color: var(--offwhite);
+  font-size: clamp(1.2rem, 3vw, 1.9rem); max-width: 780px;
+  margin: 0 auto 1rem; line-height: 1.55; position: relative;
+}
+.quote-attr { font-family: 'Oswald', sans-serif; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold-lt); opacity: 0.8; }
+
+/* ═══════════════════════════════
+   FURTHER MILESTONES
+═══════════════════════════════ */
+#further { background: linear-gradient(135deg, var(--charcoal-mid) 0%, #1E1008 100%); border-top: 1px solid rgba(201,168,76,0.15); }
+.further-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 3rem; }
+@media (max-width: 700px) { .further-grid { grid-template-columns: 1fr; } }
+.further-card {
+  background: rgba(26,26,26,0.6); border: 1px solid rgba(201,168,76,0.18);
+  border-radius: 2px; overflow: hidden;
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s;
+}
+.further-card.visible { opacity: 1; transform: translateY(0); }
+.further-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
+.further-img { aspect-ratio: 16/7; background: var(--charcoal-lt); position: relative; overflow: hidden; }
+.further-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.further-img-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(26,26,26,0.7), transparent 60%); }
+.further-img-year { position: absolute; bottom: 1rem; left: 1.2rem; font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 600; color: var(--gold); text-shadow: 0 2px 10px rgba(0,0,0,0.7); }
+.further-body { padding: 1.5rem; }
+.further-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; font-style: italic; color: var(--offwhite); margin-bottom: 0.8rem; line-height: 1.3; }
+.further-text { font-size: 0.97rem; line-height: 1.75; color: var(--cream); opacity: 0.87; }
+
+/* ═══════════════════════════════
+   FOOTER
+═══════════════════════════════ */
+footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding: 3.5rem 0 2rem; text-align: center; }
+.footer-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; font-style: italic; color: var(--gold); margin-bottom: 0.5rem; }
+.footer-sub { font-family: 'Oswald', sans-serif; font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--offwhite); opacity: 0.4; margin-bottom: 2rem; }
+.footer-divider { width: 1px; height: 40px; background: rgba(201,168,76,0.2); margin: 0 auto 2rem; }
+.footer-note { font-size: 0.85rem; color: var(--offwhite); opacity: 0.35; line-height: 1.7; }
+.footer-flags { font-size: 1.8rem; margin-bottom: 0.8rem; }
+
+/* ── UTILITIES ── */
+.fade-up { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 480px) {
+  .timeline-rail::before { left: 30px; }
+  .milestone { grid-template-columns: 60px 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- AUDIO – from root directory -->
+<audio id="bgAudio" src="sound.mp3" loop preload="auto"></audio>
+
+<div id="progress-bar"></div>
+
+<!-- ═══════════════════════════════ NAV ═══════════════════════════════ -->
+<nav id="navbar">
+  <div class="nav-logo">1956 · 70. Évforduló</div>
+
+  <ul class="nav-center" id="navLinks">
+    <li><a href="#hero">Kezdőlap</a></li>
+    <li><a href="#timeline">Eseménynaptár</a></li>
+    <li><a href="#further">Történelem</a></li>
+  </ul>
+
+  <div class="nav-right">
+    <button id="musicBtn" aria-label="Háttérzene be/ki" title="Háttérzene">
+      <div class="music-bars" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <span class="music-icon-play music-label">♪ Zene</span>
+      <span class="music-icon-pause music-label">❚❚ Szünet</span>
+    </button>
+    <div class="hamburger" id="hamburger" aria-label="Menü">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════ VIDEO MODAL ═══════════════════════════════ -->
+<div id="videoModal" role="dialog" aria-modal="true" aria-label="1956 – Videó">
+  <div class="modal-inner">
+    <button id="modalClose" aria-label="Bezárás">✕</button>
+    <!-- video src from root directory -->
+    <video id="heroVideo"
+      src="1956_hero_banner.mp4"
+      controls
+      preload="metadata"
+      playsinline
+      poster="1956_hero_banner.png">
+      A böngésző nem támogatja a videó lejátszást.
+    </video>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+<section id="hero" role="button" aria-label="Videó lejátszása" tabindex="0">
+  <!-- hero image from root directory -->
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="particles" id="particles"></div>
+  <div class="hero-year" aria-hidden="true">1956</div>
+
+  <div class="hero-content">
+    <span class="hero-eyebrow">70. Évforduló · 1956–2026</span>
+    <h1 class="hero-title">A Szabadság Népe</h1>
+    <p class="hero-subtitle">Ismerd meg a történetet, ahol a bátorság legyőzte a félelmet!</p>
+    <div class="hero-video-hint">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18a1 1 0 000-1.69L9.54 5.98A1 1 0 008 6.82z"/>
+      </svg>
+      Kattints a videóért
+    </div>
+  </div>
+
+  <div class="hero-play-ring" aria-hidden="true">
+    <div class="hero-play-circle">
+      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </div>
+  </div>
+
+  <a href="#timeline" class="hero-scroll" aria-label="Görgets le" onclick="event.stopPropagation()">
+    <span>Tovább</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 5v14M5 12l7 7 7-7"/>
+    </svg>
+  </a>
+</section>
+
+<div class="flag-stripe"></div>
+
+<!-- ═══════════════════════════════ TIMELINE ═══════════════════════════════ -->
+<section id="timeline">
+  <div class="container">
+    <div class="timeline-header fade-up">
+      <span class="section-label">A forradalom napjai</span>
+      <h2 class="section-title">10 Fontos Pillanat<br>1956-ból</h2>
+      <div class="gold-line"></div>
+      <p class="section-intro">1956 októberében a magyar nép – diákok, munkások, és közönséges emberek – összefogott a szabadságért. Kattints az eseményekre, és ismerd meg, mi történt!</p>
+    </div>
+
+    <div class="timeline-rail" id="timelineRail">
+
+      <div class="milestone" data-idx="0">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(0)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">01 · esemény</div>
+              <div class="milestone-title">A diákok gyűlése a Műegyetemen</div>
+              <div class="milestone-date-loc">1956. október 22. · Budapesti Műegyetem</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_01_muegyetem.png" alt="Diákok gyűlése a Műegyetemen" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Egyetemista fiatalok összeültek, mert megelégelték, hogy nem élhetnek szabadon. Írtak egy 16 pontból álló listát, amiben olyan dolgokat kértek, mint a szabad választások vagy hogy a szovjet katonák menjenek haza. Ez a bátor lépés indította el az eseményeket.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="1">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(1)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">02 · esemény</div>
+              <div class="milestone-title">A Bem-szoborhoz vonulás</div>
+              <div class="milestone-date-loc">1956. október 23. délután · Bem tér, Budapest</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_02_bem_ter.png" alt="Bem-szoborhoz vonulás" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Másnap a diákokhoz csatlakoztak a gyári munkások és az utcán sétáló emberek is. Hatalmas tömeg vonult a Bem-szoborhoz. Nem verekedni akartak, hanem békésen megmutatni, hogy a magyarok összefognak a szabadságért. Itt vágták ki először a címert a zászló közepéből, ami a forradalom jelképe lett.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="2">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(2)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">03 · esemény</div>
+              <div class="milestone-title">Tüntetés a Parlamentnél</div>
+              <div class="milestone-date-loc">1956. október 23. este · Kossuth tér (Parlament)</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_03_parlament.png" alt="Tüntetés a Parlamentnél" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Estére már százezer ember gyűlt össze a Parlament előtt. Sötét volt, ezért az emberek újságokat gyújtottak meg, hogy világítsanak. Nagy Imrét, a népszerű politikust kérték, hogy beszéljen hozzájuk. Mindenki érezte, hogy valami hatalmas dolog van készülőben.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="3">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(3)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">04 · esemény</div>
+              <div class="milestone-title">A Rádió ostroma és a Sztálin-szobor ledöntése</div>
+              <div class="milestone-date-loc">1956. október 23. éjszaka · Bródy Sándor utca és Felvonulási tér</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_04_radio_ostrom.png" alt="A Rádió ostroma" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>A tömeg a Magyar Rádióhoz ment, hogy beolvassák a követeléseiket, de az épületet védő fegyveresek lőni kezdtek a népre. Ekkor dördültek el az első lövések. Eközben a város másik pontján a dühös emberek ledöntötték az elnyomást jelképező óriási, nehéz Sztálin-szobrot.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="4">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(4)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">05 · esemény</div>
+              <div class="milestone-title">Megérkeznek az orosz tankok</div>
+              <div class="milestone-date-loc">1956. október 24. · Budapest utcái</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_05_orosz_tankok.png" alt="Orosz tankok Budapesten" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>A kormány vezetői megijedtek és behívták a szovjet (orosz) hadsereget. Hatalmas, félelmetes tankok gördültek be Budapest utcáira. A magyar emberek azonban nem futottak el: barikádokat (torlaszokat) építettek az utcákon, és megpróbálták megállítani őket.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="5">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(5)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">06 · esemény</div>
+              <div class="milestone-title">A véres csütörtök</div>
+              <div class="milestone-date-loc">1956. október 25. · Kossuth tér</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_06_veres_csutortok.png" alt="Véres csütörtök" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Egy békés, zászlókkal felvonuló tömegre a Parlamentnél hirtelen, figyelmeztetés nélkül lőni kezdtek a háztetőkről. Nagyon sok ártatlan ember veszítette életét ezen a napon. Ez a szörnyűség még jobban megerősítette a magyarokat abban, hogy nem adják fel a harcot.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="6">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(6)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">07 · esemény</div>
+              <div class="milestone-title">A Köztársaság téri csata és Mindszenty kiszabadulása</div>
+              <div class="milestone-date-loc">1956. október 30. · Köztársaság tér és Felsőpetény</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_07_koztarsasag_ter.png" alt="Köztársaság téri csata" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Súlyos harcok törtek ki a forradalmárok és a pártközpontot védő fegyveresek között. Ugyanebben az időszakban bátor katonák kiszabadították fogságából Mindszenty József bíborost, a magyar egyház fejét, akit a gonosz rendszer korábban igazságtalanul börtönzött be.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="7">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(7)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">08 · esemény</div>
+              <div class="milestone-title">Magyarország kikiáltja a semlegességet</div>
+              <div class="milestone-date-loc">1956. november 1. · Parlament, Budapest</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_08_semlegesseg.png" alt="Semlegességi nyilatkozat" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Nagy Imre, az új miniszterelnök bejelentette, hogy Magyarország kilép a szovjet katonai szövetségből, és semleges ország lesz – pontosan úgy, mint Ausztria. Ez azt jelentette volna, hogy végre békében, a saját szabályaink szerint élhetünk.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="8">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(8)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">09 · esemény</div>
+              <div class="milestone-title">A szovjet támadás – „Forgószél" hadművelet</div>
+              <div class="milestone-date-loc">1956. november 4. · Egész Magyarország</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_09_forgoszel.png" alt="Forgószél hadművelet" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Hajnalban a szovjet hadsereg hatalmas túlerővel, rengeteg tankkal megtámadta Budapestet és a nagyobb városokat. Nagy Imre a rádióban kért segítséget a világtól, de senki sem jött a segítségünkre. Elkezdődtek a legkeményebb harcok a szabadságért.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="milestone" data-idx="9">
+        <div class="milestone-dot"><div class="dot"></div></div>
+        <div class="milestone-card" onclick="toggleMilestone(9)">
+          <div class="milestone-card-header">
+            <div class="milestone-meta">
+              <div class="milestone-num">10 · esemény</div>
+              <div class="milestone-title">A „Pesti Srácok" ellenállása és a megtorlás</div>
+              <div class="milestone-date-loc">1956. november–december · Corvin köz, Széna tér</div>
+            </div>
+            <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+          <div class="milestone-body"><div class="milestone-body-inner">
+            <div class="milestone-img"><img src="1956_10_pesti_sracok.png" alt="Pesti Srácok" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text"><p>Fiatal fiúk és lányok – akiket Pesti Srácoknak neveztek – hetekig harcoltak a hatalmas tankok ellen a pesti utcákon. Bár a forradalmat végül leverték, és sokakat börtönbe zártak vagy elüldöztek, a Pesti Srácok bátorsága megmutatta a világnak, hogy a magyarokat nem lehet megtörni.</p></div>
+          </div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ QUOTE BAND ═══════════════════════════════ -->
+<div id="quote-band">
+  <blockquote class="container">
+    <p class="quote-text">„A magyar nép mindig is szerette a szabadságot. 1956-ban megmutatta a világnak, hogy a bátorság nem ismer korlátokat."</p>
+    <cite class="quote-attr">Az 1956-os forradalom emlékezete</cite>
+  </blockquote>
+</div>
+
+<!-- ═══════════════════════════════ FURTHER ═══════════════════════════════ -->
+<section id="further">
+  <div class="container">
+    <div class="fade-up">
+      <span class="section-label">Magyar történelem</span>
+      <h2 class="section-title">További Fontos<br>Mérföldkövek</h2>
+      <div class="gold-line"></div>
+      <p class="section-intro">A magyar nép mindig is szerette a szabadságot. 1956 nem az egyetlen alkalom volt, amikor fellázadtunk az elnyomás ellen. Itt van két másik nagyon hasonló és fontos esemény:</p>
+    </div>
+    <div class="further-grid">
+      <div class="further-card" style="transition-delay:.1s">
+        <div class="further-img">
+          <img src="history_1848.png" alt="1848-as forradalom" loading="lazy" decoding="async" onerror="this.style.display='none'">
+          <div class="further-img-overlay"></div>
+          <div class="further-img-year">1848</div>
+        </div>
+        <div class="further-body">
+          <h3 class="further-title">Március 15. – Az 1848-as Forradalom</h3>
+          <p class="further-text">Régebben, a dédnagyapáink idejében a magyarok a Habsburg Császárság ellen lázadtak fel. Petőfi Sándor és a márciusi ifjak a Nemzeti Múzeumnál gyűltek össze, és pont úgy, mint 1956-ban, ők is pontokba szedték, mit kíván a magyar nemzet – például a sajtó szabadságát.</p>
+        </div>
+      </div>
+      <div class="further-card" style="transition-delay:.25s">
+        <div class="further-img">
+          <img src="history_1989.png" alt="1989 rendszerváltás" loading="lazy" decoding="async" onerror="this.style.display='none'">
+          <div class="further-img-overlay"></div>
+          <div class="further-img-year">1989</div>
+        </div>
+        <div class="further-body">
+          <h3 class="further-title">Június 16. és Október 23. – A Rendszerváltás</h3>
+          <p class="further-text">Több mint 30 évvel 1956 után az emberek álma végül valóra vált. Nagy Imrét és a forradalom mártírjait ünnepélyesen újratemették, az orosz katonák elhagyták az országot, és 1989. október 23-án – pont a forradalom napján! – kikiáltották a szabad Magyar Köztársaságot.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="flag-stripe"></div>
+
+<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-flags" aria-hidden="true">🇭🇺</div>
+    <div class="footer-logo">1956 · A Szabadság Népe</div>
+    <div class="footer-sub">70. Évforduló · 1956–2026</div>
+    <div class="footer-divider"></div>
+    <p class="footer-note">
+      Ez az oldal a magyar forradalom és szabadságharc emlékét őrzi.<br>
+      Készült iskolások számára – hogy soha ne feledjük, mit tett a magyar nép a szabadságért.<br><br>
+      <em>„A magyarokat nem lehet megtörni."</em>
+    </p>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════ JS ═══════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ─── AUDIO ─── */
+  const audio    = document.getElementById('bgAudio');
+  const musicBtn = document.getElementById('musicBtn');
+  let audioReady = false;
+
+  audio.volume = 0.5;
+
+  function tryPlay() {
+    return audio.play().then(() => {
+      musicBtn.classList.add('playing');
+      audioReady = true;
+    }).catch(() => {});
+  }
+
+  // Attempt autoplay immediately (works if page policy allows)
+  tryPlay();
+
+  // Fallback: start on first user interaction
+  function onInteract() {
+    if (!audioReady) tryPlay();
+    document.removeEventListener('click',      onInteract);
+    document.removeEventListener('keydown',    onInteract);
+    document.removeEventListener('touchstart', onInteract);
+  }
+  document.addEventListener('click',      onInteract, { passive: true });
+  document.addEventListener('keydown',    onInteract, { passive: true });
+  document.addEventListener('touchstart', onInteract, { passive: true });
+
+  musicBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (audio.paused) {
+      audio.play().then(() => musicBtn.classList.add('playing')).catch(() => {});
+    } else {
+      audio.pause();
+      musicBtn.classList.remove('playing');
+    }
+  });
+
+  /* ─── VIDEO MODAL ─── */
+  const modal     = document.getElementById('videoModal');
+  const heroVideo = document.getElementById('heroVideo');
+  const heroEl    = document.getElementById('hero');
+  const closeBtn  = document.getElementById('modalClose');
+
+  function openModal() {
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Pause background music while video plays
+    if (!audio.paused) {
+      audio.pause();
+      musicBtn.classList.remove('playing');
+    }
+    heroVideo.play().catch(() => {});
+  }
+  function closeModal() {
+    heroVideo.pause();
+    heroVideo.currentTime = 0;
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  heroEl.addEventListener('click', openModal);
+  heroEl.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(); }
+  });
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', function(e) { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+  /* ─── HAMBURGER ─── */
+  var hamburger = document.getElementById('hamburger');
+  var navLinks  = document.getElementById('navLinks');
+  hamburger.addEventListener('click', function(e) {
+    e.stopPropagation();
+    navLinks.classList.toggle('open');
+  });
+  navLinks.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() { navLinks.classList.remove('open'); });
+  });
+
+  /* ─── SCROLL PROGRESS (rAF throttled) ─── */
+  var bar     = document.getElementById('progress-bar');
+  var ticking = false;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      requestAnimationFrame(function() {
+        var h   = document.documentElement;
+        var pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+        bar.style.width = pct + '%';
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+
+  /* ─── PARTICLES ─── */
+  var pc   = document.getElementById('particles');
+  var frag = document.createDocumentFragment();
+  for (var i = 0; i < 28; i++) {
+    var p  = document.createElement('div');
+    var sz = (1 + Math.random() * 2).toFixed(1);
+    p.className = 'particle';
+    p.style.cssText =
+      'left:'    + (Math.random() * 100).toFixed(1) + '%;' +
+      'bottom:'  + (Math.random() * 25).toFixed(1)  + '%;' +
+      '--dur:'   + (6 + Math.random() * 10).toFixed(1) + 's;' +
+      '--delay:' + (Math.random() * 12).toFixed(1) + 's;' +
+      '--dx:'    + ((Math.random() - 0.5) * 60).toFixed(0) + 'px;' +
+      'width:'   + sz + 'px;height:' + sz + 'px';
+    frag.appendChild(p);
+  }
+  pc.appendChild(frag);
+
+  /* ─── TIMELINE ACCORDION ─── */
+  var activeIdx = null;
+  window.toggleMilestone = function(idx) {
+    var items = document.querySelectorAll('.milestone');
+    if (activeIdx === idx) {
+      items[idx].classList.remove('active');
+      activeIdx = null;
+    } else {
+      if (activeIdx !== null) items[activeIdx].classList.remove('active');
+      items[idx].classList.add('active');
+      activeIdx = idx;
+      setTimeout(function() {
+        var y = items[idx].getBoundingClientRect().top + window.scrollY - 90;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }, 80);
+    }
+  };
+
+  /* ─── INTERSECTION OBSERVER (scroll reveals) ─── */
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+  var milestones = document.querySelectorAll('.milestone');
+  milestones.forEach(function(el, i) {
+    el.style.transitionDelay = (i * 0.055) + 's';
+    io.observe(el);
+  });
+  document.querySelectorAll('.further-card, .fade-up').forEach(function(el) { io.observe(el); });
+
+  /* ─── LAZY IMAGE POLYFILL (for older browsers) ─── */
+  if (!('loading' in HTMLImageElement.prototype)) {
+    var imgObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          var img = e.target;
+          if (img.dataset.src) img.src = img.dataset.src;
+          imgObs.unobserve(img);
+        }
+      });
+    }, { rootMargin: '300px' });
+    document.querySelectorAll('img[loading="lazy"]').forEach(function(img) { imgObs.observe(img); });
+  }
+
+})();
+</script>
+</body>
+</html>
