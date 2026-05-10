@@ -1053,7 +1053,7 @@ window.CURRENT_LANG = 'hu';
     function getYouTubeSrc(wrap) {
       var ytId = wrap.getAttribute('data-youtube');
       if (!ytId) return '';
-      return 'https://www.youtube.com/embed/' + ytId + '?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1&playsinline=1';
+      return 'https://www.youtube.com/embed/' + ytId + '?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
     }
 
     function getOrCreateYouTube(wrap) {
