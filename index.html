@@ -384,7 +384,7 @@ section { padding: 6rem 0; }
 
 /* 2026 special card */
 .further-card-2026 { border-color: rgba(201,168,76,0.45) !important; }
-.further-card-2026 .further-body { border-top: 2px solid var(--gold); }
+.further-card .further-body { border-top: 2px solid var(--gold); }
 .further-video-wrap {
   position: relative; width: 100%; aspect-ratio: 16/9;
   background: #000; overflow: hidden; cursor: pointer;
@@ -394,7 +394,7 @@ section { padding: 6rem 0; }
   border: 0; pointer-events: all;
 }
 .further-video-badge {
-  position: absolute; top: 0.7rem; left: 0.9rem;
+  position: absolute; bottom: 1rem; left: 1.2rem;
   font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 600;
   color: var(--gold); text-shadow: 0 2px 10px rgba(0,0,0,0.85);
   z-index: 2; pointer-events: none;
@@ -416,7 +416,7 @@ section { padding: 6rem 0; }
 }
 .further-card.visible { opacity: 1; transform: translateY(0); }
 .further-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
-.further-img { aspect-ratio: 16/7; background: var(--charcoal-lt); position: relative; overflow: hidden; }
+.further-img { aspect-ratio: 16/9; background: var(--charcoal-lt); position: relative; overflow: hidden; }
 .further-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .further-img-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(26,26,26,0.7), transparent 60%); }
 .further-img-year { position: absolute; bottom: 1rem; left: 1.2rem; font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 600; color: var(--gold); text-shadow: 0 2px 10px rgba(0,0,0,0.7); }
@@ -787,7 +787,7 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
     </div>
     <div class="further-grid">
       <div class="further-card" style="transition-delay:.1s">
-        <div class="further-img" data-video="history_1848.mp4" data-youtube="UzKDEvpsHgk">
+        <div class="further-img" data-youtube="UzKDEvpsHgk">
           <img src="history_1848.png" alt="1848-as forradalom" data-i18n-alt="alt_1848" loading="lazy" decoding="async" onerror="this.style.display='none'">
           <div class="further-img-overlay"></div>
           <div class="further-img-year">1848</div>
@@ -799,7 +799,7 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
         </div>
       </div>
       <div class="further-card" style="transition-delay:.25s">
-        <div class="further-img" data-video="history_1989.mp4" data-youtube="NxMv9hB8PVM">
+        <div class="further-img" data-youtube="NxMv9hB8PVM">
           <img src="history_1989.png" alt="1989 rendszerváltás" data-i18n-alt="alt_1989" loading="lazy" decoding="async" onerror="this.style.display='none'">
           <div class="further-img-overlay"></div>
           <div class="further-img-year">1989</div>
@@ -1050,13 +1050,18 @@ window.CURRENT_LANG = 'hu';
       return vid;
     }
 
+    function getYouTubeSrc(wrap) {
+      var ytId = wrap.getAttribute('data-youtube');
+      if (!ytId) return '';
+      return 'https://www.youtube.com/embed/' + ytId + '?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1&playsinline=1';
+    }
+
     function getOrCreateYouTube(wrap) {
       var yt = wrap._hoverYT;
+      var src = getYouTubeSrc(wrap);
+      if (!src) return null;
       if (!yt) {
-        var ytId = wrap.getAttribute('data-youtube');
-        if (!ytId) return null;
         yt = document.createElement('iframe');
-        yt.src = 'https://www.youtube.com/embed/' + ytId + '?autoplay=1&mute=0&rel=0&modestbranding=1';
         yt.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
         yt.setAttribute('allowfullscreen', '');
         yt.referrerPolicy = 'strict-origin-when-cross-origin';
@@ -1065,6 +1070,7 @@ window.CURRENT_LANG = 'hu';
         wrap.appendChild(yt);
         wrap._hoverYT = yt;
       }
+      if (!yt.src) yt.src = src;
       return yt;
     }
 
@@ -1082,12 +1088,15 @@ window.CURRENT_LANG = 'hu';
         if (activeVid.tagName === 'VIDEO') activeVid.pause();
       }
 
-      // Check if YouTube or local video
+      // Prefer YouTube when data-youtube exists; use local MP4 only where no YouTube source is provided.
       var ytId = wrap.getAttribute('data-youtube');
+      var videoSrc = wrap.getAttribute('data-video');
       var media = null;
+      var useYouTube = false;
       if (ytId) {
         media = getOrCreateYouTube(wrap);
-      } else {
+        useYouTube = true;
+      } else if (videoSrc) {
         media = getOrCreateVideo(wrap);
       }
 
@@ -1095,8 +1104,7 @@ window.CURRENT_LANG = 'hu';
       activeVid  = media;
       activeWrap = wrap;
 
-      if (ytId) {
-        // YouTube - just show it
+      if (useYouTube) {
         media.classList.add('visible');
       } else {
         // Local video - reset and play
