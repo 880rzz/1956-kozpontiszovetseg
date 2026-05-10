@@ -69,8 +69,12 @@ nav {
 }
 .nav-center a:hover { opacity: 1; color: var(--gold); }
 
+/* NAV RIGHT: Music + Languages + Hamburger */
+.nav-right { 
+  display: flex; align-items: center; gap: 0.6rem;
+}
+
 /* MUSIC BUTTON */
-.nav-right { display: flex; align-items: center; gap: 0.8rem; }
 
 #musicBtn {
   display: flex; align-items: center; gap: 0.45rem;
@@ -131,7 +135,13 @@ nav {
   }
   .nav-center.open { display: flex; }
   .music-label { display: none; }
-  #musicBtn { padding: 0.38rem 0.65rem; }
+  #musicBtn { padding: 0.35rem 0.55rem; min-width: 0; }
+  .lang-switcher { padding-left: 0.4rem; border-left-width: 1px; }
+}
+
+@media (min-width: 761px) {
+  .hamburger { display: none; }
+  #musicBtn { padding: 0.38rem 0.9rem; }
 }
 
 /* video modal removed */
@@ -442,6 +452,46 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
   .timeline-rail::before { left: 30px; }
   .milestone { grid-template-columns: 60px 1fr; }
 }
+
+/* ═══════════════════════════════
+   LANGUAGE SWITCHER
+═══════════════════════════════ */
+.lang-switcher {
+  display: flex; gap: 0.25rem; align-items: center;
+  border-left: 1px solid rgba(201,168,76,0.2);
+  padding-left: 0.6rem;
+}
+.lang-btn {
+  min-width: 28px; height: 28px;
+  border: 1px solid rgba(201,168,76,0.35); border-radius: 16px;
+  background: transparent; color: var(--cream); cursor: pointer;
+  font-family: 'Oswald', sans-serif; font-size: 0.6rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  transition: all 0.2s ease;
+  padding: 0 0.5rem; font-weight: 600;
+}
+.lang-btn:hover { 
+  border-color: var(--gold); 
+  background: rgba(201,168,76,0.1); 
+  color: var(--gold);
+}
+.lang-btn.active { 
+  background: var(--gold); 
+  color: var(--charcoal); 
+  border-color: var(--gold);
+}
+
+/* Desktop: show all */
+@media (min-width: 761px) {
+  .lang-switcher { padding-left: 0.8rem; }
+  .lang-btn { min-width: 32px; height: 32px; font-size: 0.62rem; padding: 0 0.6rem; }
+}
+
+/* Mobile: compact */
+@media (max-width: 760px) {
+  .lang-switcher { padding-left: 0.5rem; gap: 0.15rem; }
+  .lang-btn { min-width: 26px; height: 26px; font-size: 0.55rem; padding: 0 0.35rem; }
+}
 </style>
 </head>
 <body>
@@ -453,30 +503,37 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
 
 <!-- ═══════════════════════════════ NAV ═══════════════════════════════ -->
 <nav id="navbar">
-  <div class="nav-logo">1956 · 70. Évforduló</div>
+  <div class="nav-logo" data-i18n="nav_logo">1956 · 70. Évforduló</div>
 
   <ul class="nav-center" id="navLinks">
-    <li><a href="#hero">Kezdőlap</a></li>
-    <li><a href="#timeline">Eseménynaptár</a></li>
-    <li><a href="#further">Történelem</a></li>
+    <li><a href="#hero" data-i18n="nav_kezdolap">Kezdőlap</a></li>
+    <li><a href="#timeline" data-i18n="nav_esemenynaptar">Eseménynaptár</a></li>
+    <li><a href="#further" data-i18n="nav_tortenelem">Történelem</a></li>
   </ul>
 
   <div class="nav-right">
-    <button id="musicBtn" aria-label="Háttérzene be/ki" title="Háttérzene">
+    <button id="musicBtn" aria-label="Háttérzene be/ki" data-aria-i18n="music_btn_aria" title="Háttérzene" data-title-i18n="music_title">
       <div class="music-bars" aria-hidden="true">
         <span></span><span></span><span></span><span></span>
       </div>
-      <span class="music-icon-play music-label">♪ Zene</span>
-      <span class="music-icon-pause music-label">❚❚ Szünet</span>
+      <span class="music-icon-play music-label" data-i18n="nav_music_play">♪ Zene</span>
+      <span class="music-icon-pause music-label" data-i18n="nav_music_pause">❚❚ Szünet</span>
     </button>
-    <div class="hamburger" id="hamburger" aria-label="Menü">
+
+    <div class="lang-switcher" id="langSwitcher">
+      <button class="lang-btn active" data-lang="hu" aria-label="Magyar">HU</button>
+      <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
+      <button class="lang-btn" data-lang="de" aria-label="Deutsch">DE</button>
+    </div>
+
+    <div class="hamburger" id="hamburger" aria-label="Menü" data-aria-i18n="menu_aria">
       <span></span><span></span><span></span>
     </div>
   </div>
 </nav>
 
 <!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
-<section id="hero" aria-label="Főoldal hero" tabindex="-1">
+<section id="hero" aria-label="Főoldal hero" data-aria-i18n="hero_aria" tabindex="-1">
   <!-- static image layer -->
   <div class="hero-bg"></div>
   <!-- hover/touch video layer: lazy, muted, loop, no controls -->
@@ -493,15 +550,10 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
   <div class="hero-year" aria-hidden="true" style="z-index:4">1956</div>
 
   <div class="hero-content" style="z-index:4">
-    <span class="hero-eyebrow">70. Évforduló · 1956–2026</span>
-    <h1 class="hero-title">A Szabadság Népe</h1>
-    <p class="hero-subtitle">Ismerd meg a történetet, ahol a bátorság legyőzte a félelmet!</p>
-    <div class="hero-video-hint">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18a1 1 0 000-1.69L9.54 5.98A1 1 0 008 6.82z"/>
-      </svg>
-      Vidd az egeret a videóért
-    </div>
+    <span class="hero-eyebrow" data-i18n="hero_eyebrow">70. Évforduló · 1956–2026</span>
+    <h1 class="hero-title" data-i18n="hero_title">A Szabadság Népe</h1>
+    <p class="hero-subtitle" data-i18n="hero_subtitle">Ismerd meg a történetet, ahol a bátorság legyőzte a félelmet!</p>
+
   </div>
 
   <div class="hero-play-ring" aria-hidden="true" style="z-index:5">
@@ -510,8 +562,8 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
     </div>
   </div>
 
-  <a href="#timeline" class="hero-scroll" style="z-index:5" aria-label="Görgets le" onclick="event.stopPropagation()">
-    <span>Tovább</span>
+  <a href="#timeline" class="hero-scroll" style="z-index:5" onclick="event.stopPropagation()">
+    <span data-i18n="hero_scroll">Tovább</span>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M12 5v14M5 12l7 7 7-7"/>
     </svg>
@@ -524,10 +576,10 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
 <section id="timeline">
   <div class="container">
     <div class="timeline-header fade-up">
-      <span class="section-label">A forradalom napjai</span>
-      <h2 class="section-title">10 Fontos Pillanat<br>1956-ból</h2>
+      <span class="section-label" data-i18n="timeline_label">A forradalom napjai</span>
+      <h2 class="section-title" data-i18n="timeline_title">10 Fontos Pillanat<br>1956-ból</h2>
       <div class="gold-line"></div>
-      <p class="section-intro">1956 októberében a magyar nép – diákok, munkások, és közönséges emberek – összefogott a szabadságért. Kattints az eseményekre, és ismerd meg, mi történt!</p>
+      <p class="section-intro" data-i18n="timeline_intro">1956 októberében a magyar nép – diákok, munkások, és közönséges emberek – összefogott a szabadságért. Kattints az eseményekre, és ismerd meg, mi történt!</p>
     </div>
 
     <div class="timeline-rail" id="timelineRail">
@@ -538,14 +590,14 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
           <div class="milestone-card-header">
             <div class="milestone-meta">
               <div class="milestone-num">01 · esemény</div>
-              <div class="milestone-title">A diákok gyűlése a Műegyetemen</div>
-              <div class="milestone-date-loc">1956. október 22. · Budapesti Műegyetem</div>
+              <div class="milestone-title" data-i18n="milestone-title-A diákok g">A diákok gyűlése a Műegyetemen</div>
+              <div class="milestone-date-loc" data-i18n="milestone-date-1956. októ">1956. október 22. · Budapesti Műegyetem</div>
             </div>
             <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
           </div>
           <div class="milestone-body"><div class="milestone-body-inner">
-            <div class="milestone-img" data-video="1956_01_muegyetem.mp4"><img src="1956_01_muegyetem.png" alt="Diákok gyűlése a Műegyetemen" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
-            <div class="milestone-text"><p>Egyetemista fiatalok összeültek, mert megelégelték, hogy nem élhetnek szabadon. Írtak egy 16 pontból álló listát, amiben olyan dolgokat kértek, mint a szabad választások vagy hogy a szovjet katonák menjenek haza. Ez a bátor lépés indította el az eseményeket.</p></div>
+            <div class="milestone-img" data-video="1956_01_muegyetem.mp4"><img src="1956_01_muegyetem.png" alt="Diákok gyűlése a Műegyetemen" data-alt-i18n="m01_alt" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text" data-i18n="milestone-text-Egyetemista fia"><p>Egyetemista fiatalok összeültek, mert megelégelték, hogy nem élhetnek szabadon. Írtak egy 16 pontból álló listát, amiben olyan dolgokat kértek, mint a szabad választások vagy hogy a szovjet katonák menjenek haza. Ez a bátor lépés indította el az eseményeket.</p></div>
           </div></div>
         </div>
       </div>
@@ -556,14 +608,14 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
           <div class="milestone-card-header">
             <div class="milestone-meta">
               <div class="milestone-num">02 · esemény</div>
-              <div class="milestone-title">A Bem-szoborhoz vonulás</div>
-              <div class="milestone-date-loc">1956. október 23. délután · Bem tér, Budapest</div>
+              <div class="milestone-title" data-i18n="milestone-title-A Bem-szob">A Bem-szoborhoz vonulás</div>
+              <div class="milestone-date-loc" data-i18n="milestone-date-1956. októ">1956. október 23. délután · Bem tér, Budapest</div>
             </div>
             <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
           </div>
           <div class="milestone-body"><div class="milestone-body-inner">
-            <div class="milestone-img" data-video="1956_02_bem_ter.mp4"><img src="1956_02_bem_ter.png" alt="Bem-szoborhoz vonulás" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
-            <div class="milestone-text"><p>Másnap a diákokhoz csatlakoztak a gyári munkások és az utcán sétáló emberek is. Hatalmas tömeg vonult a Bem-szoborhoz. Nem verekedni akartak, hanem békésen megmutatni, hogy a magyarok összefognak a szabadságért. Itt vágták ki először a címert a zászló közepéből, ami a forradalom jelképe lett.</p></div>
+            <div class="milestone-img" data-video="1956_02_bem_ter.mp4"><img src="1956_02_bem_ter.png" alt="Bem-szoborhoz vonulás" data-alt-i18n="m02_alt" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text" data-i18n="milestone-text-Másnap a diákok"><p>Másnap a diákokhoz csatlakoztak a gyári munkások és az utcán sétáló emberek is. Hatalmas tömeg vonult a Bem-szoborhoz. Nem verekedni akartak, hanem békésen megmutatni, hogy a magyarok összefognak a szabadságért. Itt vágták ki először a címert a zászló közepéből, ami a forradalom jelképe lett.</p></div>
           </div></div>
         </div>
       </div>
@@ -574,14 +626,14 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
           <div class="milestone-card-header">
             <div class="milestone-meta">
               <div class="milestone-num">03 · esemény</div>
-              <div class="milestone-title">Tüntetés a Parlamentnél</div>
-              <div class="milestone-date-loc">1956. október 23. este · Kossuth tér (Parlament)</div>
+              <div class="milestone-title" data-i18n="milestone-title-Tüntetés a">Tüntetés a Parlamentnél</div>
+              <div class="milestone-date-loc" data-i18n="milestone-date-1956. októ">1956. október 23. este · Kossuth tér (Parlament)</div>
             </div>
             <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
           </div>
           <div class="milestone-body"><div class="milestone-body-inner">
-            <div class="milestone-img" data-video="1956_03_parlament.mp4"><img src="1956_03_parlament.png" alt="Tüntetés a Parlamentnél" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
-            <div class="milestone-text"><p>Estére már százezer ember gyűlt össze a Parlament előtt. Sötét volt, ezért az emberek újságokat gyújtottak meg, hogy világítsanak. Nagy Imrét, a népszerű politikust kérték, hogy beszéljen hozzájuk. Mindenki érezte, hogy valami hatalmas dolog van készülőben.</p></div>
+            <div class="milestone-img" data-video="1956_03_parlament.mp4"><img src="1956_03_parlament.png" alt="Tüntetés a Parlamentnél" data-alt-i18n="m03_alt" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text" data-i18n="milestone-text-Estére már száz"><p>Estére már százezer ember gyűlt össze a Parlament előtt. Sötét volt, ezért az emberek újságokat gyújtottak meg, hogy világítsanak. Nagy Imrét, a népszerű politikust kérték, hogy beszéljen hozzájuk. Mindenki érezte, hogy valami hatalmas dolog van készülőben.</p></div>
           </div></div>
         </div>
       </div>
@@ -592,14 +644,14 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
           <div class="milestone-card-header">
             <div class="milestone-meta">
               <div class="milestone-num">04 · esemény</div>
-              <div class="milestone-title">A Rádió ostroma és a Sztálin-szobor ledöntése</div>
-              <div class="milestone-date-loc">1956. október 23. éjszaka · Bródy Sándor utca és Felvonulási tér</div>
+              <div class="milestone-title" data-i18n="milestone-title-A Rádió os">A Rádió ostroma és a Sztálin-szobor ledöntése</div>
+              <div class="milestone-date-loc" data-i18n="milestone-date-1956. októ">1956. október 23. éjszaka · Bródy Sándor utca és Felvonulási tér</div>
             </div>
             <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
           </div>
           <div class="milestone-body"><div class="milestone-body-inner">
             <div class="milestone-img" data-video="1956_04_radio_ostrom.mp4"><img src="1956_04_radio_ostrom.png" alt="A Rádió ostroma" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
-            <div class="milestone-text"><p>A tömeg a Magyar Rádióhoz ment, hogy beolvassák a követeléseiket, de az épületet védő fegyveresek lőni kezdtek a népre. Ekkor dördültek el az első lövések. Eközben a város másik pontján a dühös emberek ledöntötték az elnyomást jelképező óriási, nehéz Sztálin-szobrot.</p></div>
+            <div class="milestone-text" data-i18n="milestone-text-A tömeg a Magya"><p>A tömeg a Magyar Rádióhoz ment, hogy beolvassák a követeléseiket, de az épületet védő fegyveresek lőni kezdtek a népre. Ekkor dördültek el az első lövések. Eközben a város másik pontján a dühös emberek ledöntötték az elnyomást jelképező óriási, nehéz Sztálin-szobrot.</p></div>
           </div></div>
         </div>
       </div>
@@ -610,14 +662,14 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
           <div class="milestone-card-header">
             <div class="milestone-meta">
               <div class="milestone-num">05 · esemény</div>
-              <div class="milestone-title">Megérkeznek az orosz tankok</div>
-              <div class="milestone-date-loc">1956. október 24. · Budapest utcái</div>
+              <div class="milestone-title" data-i18n="milestone-title-Megérkezne">Megérkeznek az orosz tankok</div>
+              <div class="milestone-date-loc" data-i18n="milestone-date-1956. októ">1956. október 24. · Budapest utcái</div>
             </div>
             <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
           </div>
           <div class="milestone-body"><div class="milestone-body-inner">
             <div class="milestone-img" data-video="1956_05_orosz_tankok.mp4"><img src="1956_05_orosz_tankok.png" alt="Orosz tankok Budapesten" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
-            <div class="milestone-text"><p>A kormány vezetői megijedtek és behívták a szovjet (orosz) hadsereget. Hatalmas, félelmetes tankok gördültek be Budapest utcáira. A magyar emberek azonban nem futottak el: barikádokat (torlaszokat) építettek az utcákon, és megpróbálták megállítani őket.</p></div>
+            <div class="milestone-text" data-i18n="milestone-text-A kormány vezet"><p>A kormány vezetői megijedtek és behívták a szovjet (orosz) hadsereget. Hatalmas, félelmetes tankok gördültek be Budapest utcáira. A magyar emberek azonban nem futottak el: barikádokat (torlaszokat) építettek az utcákon, és megpróbálták megállítani őket.</p></div>
           </div></div>
         </div>
       </div>
@@ -628,14 +680,14 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
           <div class="milestone-card-header">
             <div class="milestone-meta">
               <div class="milestone-num">06 · esemény</div>
-              <div class="milestone-title">A véres csütörtök</div>
-              <div class="milestone-date-loc">1956. október 25. · Kossuth tér</div>
+              <div class="milestone-title" data-i18n="milestone-title-A véres cs">A véres csütörtök</div>
+              <div class="milestone-date-loc" data-i18n="milestone-date-1956. októ">1956. október 25. · Kossuth tér</div>
             </div>
             <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
           </div>
           <div class="milestone-body"><div class="milestone-body-inner">
-            <div class="milestone-img" data-video="1956_06_veres_csutortok.mp4"><img src="1956_06_veres_csutortok.png" alt="Véres csütörtök" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
-            <div class="milestone-text"><p>Egy békés, zászlókkal felvonuló tömegre a Parlamentnél hirtelen, figyelmeztetés nélkül lőni kezdtek a háztetőkről. Nagyon sok ártatlan ember veszítette életét ezen a napon. Ez a szörnyűség még jobban megerősítette a magyarokat abban, hogy nem adják fel a harcot.</p></div>
+            <div class="milestone-img" data-video="1956_06_veres_csutortok.mp4"><img src="1956_06_veres_csutortok.png" alt="Véres csütörtök" data-alt-i18n="m06_alt" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text" data-i18n="milestone-text-Egy békés, zász"><p>Egy békés, zászlókkal felvonuló tömegre a Parlamentnél hirtelen, figyelmeztetés nélkül lőni kezdtek a háztetőkről. Nagyon sok ártatlan ember veszítette életét ezen a napon. Ez a szörnyűség még jobban megerősítette a magyarokat abban, hogy nem adják fel a harcot.</p></div>
           </div></div>
         </div>
       </div>
@@ -646,14 +698,14 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
           <div class="milestone-card-header">
             <div class="milestone-meta">
               <div class="milestone-num">07 · esemény</div>
-              <div class="milestone-title">A Köztársaság téri csata és Mindszenty kiszabadulása</div>
-              <div class="milestone-date-loc">1956. október 30. · Köztársaság tér és Felsőpetény</div>
+              <div class="milestone-title" data-i18n="milestone-title-A Köztársa">A Köztársaság téri csata és Mindszenty kiszabadulása</div>
+              <div class="milestone-date-loc" data-i18n="milestone-date-1956. októ">1956. október 30. · Köztársaság tér és Felsőpetény</div>
             </div>
             <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
           </div>
           <div class="milestone-body"><div class="milestone-body-inner">
-            <div class="milestone-img" data-video="1956_07_koztarsasag_ter.mp4"><img src="1956_07_koztarsasag_ter.png" alt="Köztársaság téri csata" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
-            <div class="milestone-text"><p>Súlyos harcok törtek ki a forradalmárok és a pártközpontot védő fegyveresek között. Ugyanebben az időszakban bátor katonák kiszabadították fogságából Mindszenty József bíborost, a magyar egyház fejét, akit a gonosz rendszer korábban igazságtalanul börtönzött be.</p></div>
+            <div class="milestone-img" data-video="1956_07_koztarsasag_ter.mp4"><img src="1956_07_koztarsasag_ter.png" alt="Köztársaság téri csata" data-alt-i18n="m07_alt" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text" data-i18n="milestone-text-Súlyos harcok t"><p>Súlyos harcok törtek ki a forradalmárok és a pártközpontot védő fegyveresek között. Ugyanebben az időszakban bátor katonák kiszabadították fogságából Mindszenty József bíborost, a magyar egyház fejét, akit a gonosz rendszer korábban igazságtalanul börtönzött be.</p></div>
           </div></div>
         </div>
       </div>
@@ -664,14 +716,14 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
           <div class="milestone-card-header">
             <div class="milestone-meta">
               <div class="milestone-num">08 · esemény</div>
-              <div class="milestone-title">Magyarország kikiáltja a semlegességet</div>
-              <div class="milestone-date-loc">1956. november 1. · Parlament, Budapest</div>
+              <div class="milestone-title" data-i18n="milestone-title-Magyarorsz">Magyarország kikiáltja a semlegességet</div>
+              <div class="milestone-date-loc" data-i18n="milestone-date-1956. nove">1956. november 1. · Parlament, Budapest</div>
             </div>
             <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
           </div>
           <div class="milestone-body"><div class="milestone-body-inner">
             <div class="milestone-img" data-video="1956_08_semlegesseg.mp4"><img src="1956_08_semlegesseg.png" alt="Semlegességi nyilatkozat" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
-            <div class="milestone-text"><p>Nagy Imre, az új miniszterelnök bejelentette, hogy Magyarország kilép a szovjet katonai szövetségből, és semleges ország lesz – pontosan úgy, mint Ausztria. Ez azt jelentette volna, hogy végre békében, a saját szabályaink szerint élhetünk.</p></div>
+            <div class="milestone-text" data-i18n="milestone-text-Nagy Imre, az ú"><p>Nagy Imre, az új miniszterelnök bejelentette, hogy Magyarország kilép a szovjet katonai szövetségből, és semleges ország lesz – pontosan úgy, mint Ausztria. Ez azt jelentette volna, hogy végre békében, a saját szabályaink szerint élhetünk.</p></div>
           </div></div>
         </div>
       </div>
@@ -682,14 +734,14 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
           <div class="milestone-card-header">
             <div class="milestone-meta">
               <div class="milestone-num">09 · esemény</div>
-              <div class="milestone-title">A szovjet támadás – „Forgószél" hadművelet</div>
-              <div class="milestone-date-loc">1956. november 4. · Egész Magyarország</div>
+              <div class="milestone-title" data-i18n="milestone-title-A szovjet ">A szovjet támadás – „Forgószél" hadművelet</div>
+              <div class="milestone-date-loc" data-i18n="milestone-date-1956. nove">1956. november 4. · Egész Magyarország</div>
             </div>
             <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
           </div>
           <div class="milestone-body"><div class="milestone-body-inner">
             <div class="milestone-img" data-video="1956_09_forgoszel.mp4"><img src="1956_09_forgoszel.png" alt="Forgószél hadművelet" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
-            <div class="milestone-text"><p>Hajnalban a szovjet hadsereg hatalmas túlerővel, rengeteg tankkal megtámadta Budapestet és a nagyobb városokat. Nagy Imre a rádióban kért segítséget a világtól, de senki sem jött a segítségünkre. Elkezdődtek a legkeményebb harcok a szabadságért.</p></div>
+            <div class="milestone-text" data-i18n="milestone-text-Hajnalban a szo"><p>Hajnalban a szovjet hadsereg hatalmas túlerővel, rengeteg tankkal megtámadta Budapestet és a nagyobb városokat. Nagy Imre a rádióban kért segítséget a világtól, de senki sem jött a segítségünkre. Elkezdődtek a legkeményebb harcok a szabadságért.</p></div>
           </div></div>
         </div>
       </div>
@@ -700,14 +752,14 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
           <div class="milestone-card-header">
             <div class="milestone-meta">
               <div class="milestone-num">10 · esemény</div>
-              <div class="milestone-title">A „Pesti Srácok" ellenállása és a megtorlás</div>
-              <div class="milestone-date-loc">1956. november–december · Corvin köz, Széna tér</div>
+              <div class="milestone-title" data-i18n="milestone-title-A „Pesti S">A „Pesti Srácok" ellenállása és a megtorlás</div>
+              <div class="milestone-date-loc" data-i18n="milestone-date-1956. nove">1956. november–december · Corvin köz, Széna tér</div>
             </div>
             <div class="milestone-toggle"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
           </div>
           <div class="milestone-body"><div class="milestone-body-inner">
-            <div class="milestone-img" data-video="1956_10_pesti_sracok.mp4"><img src="1956_10_pesti_sracok.png" alt="Pesti Srácok" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
-            <div class="milestone-text"><p>Fiatal fiúk és lányok – akiket Pesti Srácoknak neveztek – hetekig harcoltak a hatalmas tankok ellen a pesti utcákon. Bár a forradalmat végül leverték, és sokakat börtönbe zártak vagy elüldöztek, a Pesti Srácok bátorsága megmutatta a világnak, hogy a magyarokat nem lehet megtörni.</p></div>
+            <div class="milestone-img" data-video="1956_10_pesti_sracok.mp4"><img src="1956_10_pesti_sracok.png" alt="Pesti Srácok" data-alt-i18n="m10_alt" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
+            <div class="milestone-text" data-i18n="milestone-text-Fiatal fiúk és "><p>Fiatal fiúk és lányok – akiket Pesti Srácoknak neveztek – hetekig harcoltak a hatalmas tankok ellen a pesti utcákon. Bár a forradalmat végül leverték, és sokakat börtönbe zártak vagy elüldöztek, a Pesti Srácok bátorsága megmutatta a világnak, hogy a magyarokat nem lehet megtörni.</p></div>
           </div></div>
         </div>
       </div>
@@ -720,7 +772,7 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
 <div id="quote-band">
   <blockquote class="container">
     <p class="quote-text">„A magyar nép mindig is szerette a szabadságot. 1956-ban megmutatta a világnak, hogy a bátorság nem ismer korlátokat."</p>
-    <cite class="quote-attr">Az 1956-os forradalom emlékezete</cite>
+    <cite class="quote-attr" data-i18n="quote_attr">Az 1956-os forradalom emlékezete</cite>
   </blockquote>
 </div>
 
@@ -728,34 +780,34 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
 <section id="further">
   <div class="container">
     <div class="fade-up">
-      <span class="section-label">Magyar történelem</span>
-      <h2 class="section-title">További Fontos<br>Mérföldkövek</h2>
+      <span class="section-label" data-i18n="further_label">Magyar történelem</span>
+      <h2 class="section-title" data-i18n="further_title">További Fontos<br>Mérföldkövek</h2>
       <div class="gold-line"></div>
-      <p class="section-intro">A magyar nép mindig is szerette a szabadságot. 1956 nem az egyetlen alkalom volt, amikor kiálltunk a szabadságért. Íme három nagy mérföldkő a magyar szabadság történetéből – köztük a legfrissebb, 2026-os fordulat, amelyet nem vérrel, hanem polgári bátorsággal vívtak meg:</p>
+      <p class="section-intro" data-i18n="further_intro">A magyar nép mindig is szerette a szabadságot. 1956 nem az egyetlen alkalom volt, amikor kiálltunk a szabadságért. Íme három nagy mérföldkő a magyar szabadság történetéből – köztük a legfrissebb, 2026-os fordulat, amelyet nem vérrel, hanem polgári bátorsággal vívtak meg:</p>
     </div>
     <div class="further-grid">
       <div class="further-card" style="transition-delay:.1s">
-        <div class="further-img" data-video="history_1848.mp4">
-          <img src="history_1848.png" alt="1848-as forradalom" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        <div class="further-img" data-video="history_1848.mp4" data-youtube="UzKDEvpsHgk">
+          <img src="history_1848.png" alt="1848-as forradalom" data-alt-i18n="y1848_alt" loading="lazy" decoding="async" onerror="this.style.display='none'">
           <div class="further-img-overlay"></div>
           <div class="further-img-year">1848</div>
         </div>
         <div class="further-body">
-          <div class="further-revolution-tag">✦ Történelmi mérföldkő</div>
-          <h3 class="further-title">Március 15. – Az 1848-as Forradalom</h3>
-          <p class="further-text">Régebben, a dédnagyapáink idejében a magyarok a Habsburg Császárság ellen lázadtak fel. 1848 márciusában Petőfi Sándor és a márciusi ifjak a Nemzeti Múzeumnál gyűltek össze, és pont úgy, mint 1956-ban, ők is pontokba szedték, mit kíván a magyar nemzet. A 12 pontban követelték a sajtó szabadságát, a nemességi kiváltságok eltörlését, az egyenlő adózást, és azt, hogy magyarul lehessen tanítani az iskolákban. Az egész ország felkelt – a városoktól a falvakig. Azonban a Habsburg Birodalom katonái végül leverték a forradalmat. De az 1848-as szabadságharcosok nem veszélyesen – az ő bátorságuk vetette meg az alapot annak, amit később 1956-ban és 1989-ben újra megpróbáltak megvalósítani.</p>
+          <div class="further-revolution-tag" data-i18n="tag_milestone">✦ Történelmi mérföldkő</div>
+          <h3 class="further-title" data-i18n="y1848_title">Március 15. – Az 1848-as Forradalom</h3>
+          <p class="further-text" data-i18n="y1848_text">Régebben, a dédnagyapáink idejében a magyarok a Habsburg Császárság ellen lázadtak fel. 1848 márciusában Petőfi Sándor és a márciusi ifjak a Nemzeti Múzeumnál gyűltek össze, és pont úgy, mint 1956-ban, ők is pontokba szedték, mit kíván a magyar nemzet. A 12 pontban követelték a sajtó szabadságát, a nemességi kiváltságok eltörlését, az egyenlő adózást, és azt, hogy magyarul lehessen tanítani az iskolákban. Az egész ország felkelt – a városoktól a falvakig. Azonban a Habsburg Birodalom katonái végül leverték a forradalmat. De az 1848-as szabadságharcosok nem veszélyesen – az ő bátorságuk vetette meg az alapot annak, amit később 1956-ban és 1989-ben újra megpróbáltak megvalósítani.</p>
         </div>
       </div>
       <div class="further-card" style="transition-delay:.25s">
-        <div class="further-img" data-video="history_1989.mp4">
-          <img src="history_1989.png" alt="1989 rendszerváltás" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        <div class="further-img" data-video="history_1989.mp4" data-youtube="NxMv9hB8PVM">
+          <img src="history_1989.png" alt="1989 rendszerváltás" data-alt-i18n="y1989_alt" loading="lazy" decoding="async" onerror="this.style.display='none'">
           <div class="further-img-overlay"></div>
           <div class="further-img-year">1989</div>
         </div>
         <div class="further-body">
           <div class="further-revolution-tag">✦ Történelmi mérföldkő</div>
-          <h3 class="further-title">Június 16. és Október 23. – A Rendszerváltás</h3>
-          <p class="further-text">Több mint 30 évvel 1956 után az emberek álma végül valóra vált. 1989-ben a kommunista rendszer összeomlott egész Európában. 1989. június 16-án ünnepélyesen újratemették Nagy Imrét és a forradalom mártírjait – végre méltóképpen tisztelegtek azok előtt, akik 1956-ban haltak meg a szabadságért. Ezután pedig az orosz katonák végre elhagyták az országot, amelyet 33 éve tartottak megszállva. Majd 1989. október 23-án – pont a forradalom 33. évfordulóján! – kikiáltották a szabad Magyar Köztársaságot. Az egész ország utcáin ünnepeltek az emberek: a szovjet csillag helyét a magyar trikolór vette át, és végre szabadon dönthetett a magyar nép a saját sorsáról. Ez volt az 1989-es, vérfürdő nélküli forradalom – amikor a polgárok szervezetten, békésen, de határozottan megváltoztatták a történelmet.</p>
+          <h3 class="further-title" data-i18n="y1989_title">Június 16. és Október 23. – A Rendszerváltás</h3>
+          <p class="further-text" data-i18n="y1989_text">Több mint 30 évvel 1956 után az emberek álma végül valóra vált. 1989-ben a kommunista rendszer összeomlott egész Európában. 1989. június 16-án ünnepélyesen újratemették Nagy Imrét és a forradalom mártírjait – végre méltóképpen tisztelegtek azok előtt, akik 1956-ban haltak meg a szabadságért. Ezután pedig az orosz katonák végre elhagyták az országot, amelyet 33 éve tartottak megszállva. Majd 1989. október 23-án – pont a forradalom 33. évfordulóján! – kikiáltották a szabad Magyar Köztársaságot. Az egész ország utcáin ünnepeltek az emberek: a szovjet csillag helyét a magyar trikolór vette át, és végre szabadon dönthetett a magyar nép a saját sorsáról. Ez volt az 1989-es, vérfürdő nélküli forradalom – amikor a polgárok szervezetten, békésen, de határozottan megváltoztatták a történelmet.</p>
         </div>
       </div>
 
@@ -782,8 +834,8 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
         </div>
         <div class="further-body">
           <div class="further-revolution-tag">✦ Történelmi mérföldkő</div>
-          <h3 class="further-title">2026. április 12. és május 9. – Magyarország Demokráciájának Születésnapja</h3>
-          <p class="further-text">2026. április 12-én a magyar nép népszavazással leváltotta a 16 évig regnáló Orbán-kormányt – szavazócédulákkal, polgári bátorsággal és kitartással. Majd május 9-én megalakult az új parlament: Magyarország demokráciájának születésnapja. Nem puskaropogással, nem vérrel vívták meg ezt a forradalmat. Éveken át sokan elhitték, hogy a változás lehetetlen – de 2026 megmutatta: a magyarokat ma sem lehet megtörni. Az 1956-os forradalom és az 1989-es rendszerváltás szelleme él, és ez a két nap beírta magát a történelembe, mint a harmadik nagy mérföldkő a szabadság útján.</p>
+          <h3 class="further-title" data-i18n="y2026_title">2026. április 12. és május 9. – Magyarország Demokráciájának Születésnapja</h3>
+          <p class="further-text" data-i18n="y2026_text">2026. április 12-én a magyar nép népszavazással leváltotta a 16 évig regnáló Orbán-kormányt – szavazócédulákkal, polgári bátorsággal és kitartással. Majd május 9-én megalakult az új parlament: Magyarország demokráciájának születésnapja. Nem puskaropogással, nem vérrel vívták meg ezt a forradalmat. Éveken át sokan elhitték, hogy a változás lehetetlen – de 2026 megmutatta: a magyarokat ma sem lehet megtörni. Az 1956-os forradalom és az 1989-es rendszerváltás szelleme él, és ez a két nap beírta magát a történelembe, mint a harmadik nagy mérföldkő a szabadság útján.</p>
         </div>
       </div>
 
@@ -797,16 +849,24 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
 <footer>
   <div class="container">
     <div class="footer-flags" aria-hidden="true">🇭🇺</div>
-    <div class="footer-logo">1956 · A Szabadság Népe</div>
-    <div class="footer-sub">70. Évforduló · 1956–2026</div>
+    <div class="footer-logo" data-i18n="footer_logo">1956 · A Szabadság Népe</div>
+    <div class="footer-sub" data-i18n="footer_sub">70. Évforduló · 1956–2026</div>
     <div class="footer-divider"></div>
-    <p class="footer-note">
+    <p class="footer-note" data-i18n="footer_note">
       Ez az oldal a magyar forradalom és szabadságharc emlékét őrzi.<br>
       Készült iskolások számára – hogy soha ne feledjük, mit tett a magyar nép a szabadságért.<br><br>
       <em>„A magyarokat nem lehet megtörni."</em>
     </p>
   </div>
 </footer>
+
+<!-- ═══════════════════════════════ TRANSLATIONS ═══════════════════════════════ -->
+
+
+<script>
+window.TRANSLATIONS = {"hu": {"nav_logo": "1956 · 70. Évforduló", "nav_home": "Kezdőlap", "nav_timeline": "Eseménynaptár", "nav_history": "Történelem", "nav_menu": "Menü", "nav_music_play": "♪ Zene", "nav_music_pause": "❚❚ Szünet", "music_title": "Háttérzene be/ki", "hero_eyebrow": "70. Évforduló · 1956–2026", "hero_title": "A Szabadság Népe", "hero_subtitle": "Ismerd meg a történetet, ahol a bátorság legyőzte a félelmet!", "hero_scroll": "Tovább", "timeline_label": "A forradalom napjai", "timeline_title": "10 Fontos Pillanat<br>1956-ból", "timeline_intro": "1956 októberében a magyar nép – diákok, munkások, és közönséges emberek – összefogott a szabadságért. Kattints az eseményekre, és ismerd meg, mi történt!", "m01_num": "01 · esemény", "m01_title": "A diákok gyűlése a Műegyetemen", "m01_date": "1956. október 22. · Budapesti Műegyetem", "m01_text": "Egyetemista fiatalok összeültek, mert megelégelték, hogy nem élhetnek szabadon. Írtak egy 16 pontból álló listát, amiben olyan dolgokat kértek, mint a szabad választások vagy hogy a szovjet katonák menjenek haza. Ez a bátor lépés indította el az eseményeket.", "m02_num": "02 · esemény", "m02_title": "A Bem-szoborhoz vonulás", "m02_date": "1956. október 23. délután · Bem tér, Budapest", "m02_text": "Másnap a diákokhoz csatlakoztak a gyári munkások és az utcán sétáló emberek is. Hatalmas tömeg vonult a Bem-szoborhoz. Nem verekedni akartak, hanem békésen megmutatni, hogy a magyarok összefognak a szabadságért. Itt vágták ki először a címert a zászló közepéből, ami a forradalom jelképe lett.", "m03_num": "03 · esemény", "m03_title": "Tüntetés a Parlamentnél", "m03_date": "1956. október 23. este · Kossuth tér (Parlament)", "m03_text": "Estére már százezer ember gyűlt össze a Parlament előtt. Sötét volt, ezért az emberek újságokat gyújtottak meg, hogy világítsanak. Nagy Imrét, a népszerű politikust kérték, hogy beszéljen hozzájuk. Mindenki érezte, hogy valami hatalmas dolog van készülőben.", "m04_num": "04 · esemény", "m04_title": "A Rádió ostroma és a Sztálin-szobor ledöntése", "m04_date": "1956. október 23. éjszaka · Bródy Sándor utca és Felvonulási tér", "m04_text": "A tömeg a Magyar Rádióhoz ment, hogy beolvassák a követeléseiket, de az épületet védő fegyveresek lőni kezdtek a népre. Ekkor dördültek el az első lövések. Eközben a város másik pontján a dühös emberek ledöntötték az elnyomást jelképező óriási, nehéz Sztálin-szobrot.", "m05_num": "05 · esemény", "m05_title": "Megérkeznek az orosz tankok", "m05_date": "1956. október 24. · Budapest utcái", "m05_text": "A kormány vezetői megijedtek és behívták a szovjet (orosz) hadsereget. Hatalmas, félelmetes tankok gördültek be Budapest utcáira. A magyar emberek azonban nem futottak el: barikádokat (torlaszokat) építettek az utcákon, és megpróbálták megállítani őket.", "m06_num": "06 · esemény", "m06_title": "A véres csütörtök", "m06_date": "1956. október 25. · Kossuth tér", "m06_text": "Egy békés, zászlókkal felvonuló tömegre a Parlamentnél hirtelen, figyelmeztetés nélkül lőni kezdtek a háztetőkről. Nagyon sok ártatlan ember veszítette életét ezen a napon. Ez a szörnyűség még jobban megerősítette a magyarokat abban, hogy nem adják fel a harcot.", "m07_num": "07 · esemény", "m07_title": "A Köztársaság téri csata és Mindszenty kiszabadulása", "m07_date": "1956. október 30. · Köztársaság tér és Felsőpetény", "m07_text": "Súlyos harcok törtek ki a forradalmárok és a pártközpontot védő fegyveresek között. Ugyanebben az időszakban bátor katonák kiszabadították fogságából Mindszenty József bíborost, a magyar egyház fejét, akit a gonosz rendszer korábban igazságtalanul börtönzött be.", "m08_num": "08 · esemény", "m08_title": "Magyarország kikiáltja a semlegességet", "m08_date": "1956. november 1. · Parlament, Budapest", "m08_text": "Nagy Imre, az új miniszterelnök bejelentette, hogy Magyarország kilép a szovjet katonai szövetségből, és semleges ország lesz – pontosan úgy, mint Ausztria. Ez azt jelentette volna, hogy végre békében, a saját szabályaink szerint élhetünk.", "m09_num": "09 · esemény", "m09_title": "A szovjet támadás – Forgószél hadművelet", "m09_date": "1956. november 4. · Egész Magyarország", "m09_text": "Hajnalban a szovjet hadsereg hatalmas túlerővel, rengeteg tankkal megtámadta Budapestet és a nagyobb városokat. Nagy Imre a rádióban kért segítséget a világtól, de senki sem jött a segítségünkre. Elkezdődtek a legkeményebb harcok a szabadságért.", "m10_num": "10 · esemény", "m10_title": "A Pesti Srácok ellenállása és a megtorlás", "m10_date": "1956. november–december · Corvin köz, Széna tér", "m10_text": "Fiatal fiúk és lányok – akiket Pesti Srácoknak neveztek – hetekig harcoltak a hatalmas tankok ellen a pesti utcákon. Bár a forradalmat végül leverték, és sokakat börtönbe zártak vagy elüldöztek, a Pesti Srácok bátorsága megmutatta a világnak, hogy a magyarokat nem lehet megtörni.", "quote_text": "A magyar nép mindig is szerette a szabadságot. 1956-ban megmutatta a világnak, hogy a bátorság nem ismer korlátokat.", "quote_attr": "Az 1956-os forradalom emlékezete", "further_label": "Magyar történelem", "further_title": "További Fontos<br>Mérföldkövek", "further_intro": "A magyar nép mindig is szerette a szabadságot. 1956 nem az egyetlen alkalom volt, amikor kiálltunk a szabadságért. Íme három nagy mérföldkő a magyar szabadság történetéből – köztük a legfrissebb, 2026-os fordulat, amelyet nem vérrel, hanem polgári bátorsággal vívtak meg:", "tag_milestone": "✦ Történelmi mérföldkő", "y1848_title": "Március 15. – Az 1848-as Forradalom", "y1848_text": "Régebben, a dédnagyapáink idejében a magyarok a Habsburg Császárság ellen lázadtak fel. 1848 márciusában Petőfi Sándor és a márciusi ifjak a Nemzeti Múzeumnál gyűltek össze, és pont úgy, mint 1956-ban, ők is pontokba szedték, mit kíván a magyar nemzet. A 12 pontban követelték a sajtó szabadságát, a nemességi kiváltságok eltörlését, az egyenlő adózást, és azt, hogy magyarul lehessen tanítani az iskolákban. Az egész ország felkelt – a városoktól a falvakig. Azonban a Habsburg Birodalom katonái végül leverték a forradalmat. De az 1848-as szabadságharcosok nem veszélyesen – az ő bátorságuk vetette meg az alapot annak, amit később 1956-ban és 1989-ben újra megpróbáltak megvalósítani.", "y1989_title": "Június 16. és Október 23. – A Rendszerváltás", "y1989_text": "Több mint 30 évvel 1956 után az emberek álma végül valóra vált. 1989-ben a kommunista rendszer összeomlott egész Európában. 1989. június 16-án ünnepélyesen újratemették Nagy Imrét és a forradalom mártírjait – végre méltóképpen tisztelegtek azok előtt, akik 1956-ban haltak meg a szabadságért. Ezután pedig az orosz katonák végre elhagyták az országot, amelyet 33 éve tartottak megszállva. Majd 1989. október 23-án – pont a forradalom 33. évfordulóján! – kikiáltották a szabad Magyar Köztársaságot. Az egész ország utcáin ünnepeltek az emberek: a szovjet csillag helyét a magyar trikolór vette át, és végre szabadon dönthetett a magyar nép a saját sorsáról. Ez volt az 1989-es, vérfürdő nélküli forradalom – amikor a polgárok szervezetten, békésen, de határozottan megváltoztatták a történelmet.", "y2026_title": "2026. április 12. és május 9. – Magyarország Demokráciájának Születésnapja", "y2026_text": "2026. április 12-én a magyar nép népszavazással leváltotta a 16 évig regnáló Orbán-kormányt – szavazócédulákkal, polgári bátorsággal és kitartással. Majd május 9-én megalakult az új parlament: Magyarország demokráciájának születésnapja. Nem puskaropogással, nem vérrel vívták meg ezt a forradalmat. Éveken át sokan elhitték, hogy a változás lehetetlen – de 2026 megmutatta: a magyarokat ma sem lehet megtörni. Az 1956-os forradalom és az 1989-es rendszerváltás szelleme él, és ez a két nap beírta magát a történelembe, mint a harmadik nagy mérföldkő a szabadság útján.", "footer_logo": "1956 · A Szabadság Népe", "footer_sub": "70. Évforduló · 1956–2026", "footer_note": "Ez az oldal a magyar forradalom és szabadságharc emlékét őrzi. Készült iskolások számára – hogy soha ne feledjük, mit tett a magyar nép a szabadságért. A magyarokat nem lehet megtörni.", "music_btn_aria": "Háttérzene be/ki", "menu_aria": "Menü", "hero_aria": "Főoldal hero", "m01_alt": "Diákok gyűlése a Műegyetemen", "m02_alt": "Bem-szoborhoz vonulás", "m03_alt": "Tüntetés a Parlamentnél", "m04_alt": "Rádió ostroma", "m05_alt": "Orosz tankok", "m06_alt": "Véres csütörtök", "m07_alt": "Köztársaság téri csata", "m08_alt": "Semlegesseg", "m09_alt": "Szovjet támadás", "m10_alt": "Pesti Srácok", "y1848_alt": "1848-as forradalom", "y1989_alt": "1989 rendszerváltás", "y2026_alt": "2026 demokrácia születésnapja"}, "en": {"nav_logo": "1956 · 70th Anniversary", "nav_home": "Home", "nav_timeline": "Timeline", "nav_history": "History", "nav_menu": "Menu", "nav_music_play": "♪ Music", "nav_music_pause": "❚❚ Pause", "music_title": "Background music on/off", "hero_eyebrow": "70th Anniversary · 1956–2026", "hero_title": "The People of Freedom", "hero_subtitle": "Discover the story where courage defeated fear!", "hero_scroll": "Scroll", "timeline_label": "The Days of Revolution", "timeline_title": "10 Key Moments<br>from 1956", "timeline_intro": "In October 1956, the Hungarian people – students, workers, and ordinary citizens – united for freedom. Click on the events to learn what happened!", "m01_num": "01 · event", "m01_title": "Students Gather at the Polytechnic", "m01_date": "October 22, 1956 · Budapest Polytechnic", "m01_text": "University students met because they were tired of living without freedom. They wrote a list of 16 demands, including free elections and asking Soviet soldiers to leave. This brave step set the revolution in motion.", "m02_num": "02 · event", "m02_title": "March to the Bem Statue", "m02_date": "October 23, 1956 afternoon · Bem Square, Budapest", "m02_text": "The next day, factory workers and ordinary people joined the students. A huge crowd marched to the Bem statue. They did not want to fight—they wanted to peacefully show that Hungarians were united for freedom. Here, they cut the coat of arms from the middle of the flag for the first time, which became the symbol of the revolution.", "m03_num": "03 · event", "m03_title": "Demonstration at Parliament", "m03_date": "October 23, 1956 evening · Kossuth Square (Parliament)", "m03_text": "By evening, hundreds of thousands had gathered in front of Parliament. It was dark, so people lit newspapers to see. They asked popular politician Imre Nagy to speak to them. Everyone felt something enormous was about to happen.", "m04_num": "04 · event", "m04_title": "The Radio Siege and the Stalin Statue Falls", "m04_date": "October 23-24, 1956 night · Bródy Sándor Street and Liberty Square", "m04_text": "The crowd went to the Hungarian Radio to broadcast their demands, but armed guards began shooting at them. The first shots were fired. Meanwhile, across the city, angry people toppled the enormous Stalin statue—a symbol of oppression.", "m05_num": "05 · event", "m05_title": "Soviet Tanks Arrive", "m05_date": "October 24, 1956 · Budapest Streets", "m05_text": "Frightened government leaders called in the Soviet army. Huge, terrifying tanks rolled into Budapest's streets. But Hungarians did not run away—they built barricades and tried to stop them.", "m06_num": "06 · event", "m06_title": "Bloody Thursday", "m06_date": "October 25, 1956 · Kossuth Square", "m06_text": "A peaceful crowd carrying flags at Parliament was suddenly shot at from rooftops without warning. Many innocent people died that day. But this horror only strengthened Hungarians' resolve not to give up the fight.", "m07_num": "07 · event", "m07_title": "Battle at Republic Square & Mindszenty's Escape", "m07_date": "October 30, 1956 · Republic Square and Felsőpetény", "m07_text": "Fierce fighting broke out between revolutionaries and guards protecting the party center. At the same time, brave soldiers freed Cardinal József Mindszenty from prison—the head of the Hungarian Church, unjustly imprisoned by the evil regime.", "m08_num": "08 · event", "m08_title": "Hungary Declares Neutrality", "m08_date": "November 1, 1956 · Parliament, Budapest", "m08_text": "Prime Minister Imre Nagy announced that Hungary would leave the Soviet military alliance and become neutral—like Austria. This meant Hungary could finally live in peace, by its own rules.", "m09_num": "09 · event", "m09_title": "The Soviet Attack – Whirlwind Operation", "m09_date": "November 4, 1956 · All of Hungary", "m09_text": "At dawn, the Soviet army attacked Budapest and major cities with overwhelming force and countless tanks. Imre Nagy appealed to the world for help, but no one came. The fiercest battles for freedom began.", "m10_num": "10 · event", "m10_title": "The 'Pest Lads' Resistance & Retaliation", "m10_date": "November–December 1956 · Corvin Passage, Széna Square", "m10_text": "Young boys and girls—called the 'Pest Lads'—fought massive tanks in the streets of Pest for weeks. Though the revolution was eventually crushed and many were imprisoned or exiled, their bravery showed the world: Hungarians cannot be broken.", "quote_text": "The Hungarian people have always loved freedom. In 1956, they showed the world that courage knows no bounds.", "quote_attr": "Memory of the 1956 Hungarian Revolution", "further_label": "Hungarian History", "further_title": "Other Important<br>Milestones", "further_intro": "The Hungarian people have always loved freedom. 1956 was not the only time we fought for it. Here are three great milestones in the history of Hungarian freedom – including the most recent 2026 turning point, won not with bullets, but with civic courage:", "tag_milestone": "✦ Historical Milestone", "y1848_title": "March 15 – The 1848 Revolution", "y1848_text": "Long ago, our great-grandparents' generation fought against the Habsburg Empire. In March 1848, Sándor Petőfi and the youth of March gathered at the National Museum and, just like in 1956, listed what the Hungarian nation wanted. In their 12 demands, they called for freedom of the press, the abolition of noble privileges, equal taxation, and the right to teach in Hungarian. The entire country rose up—from cities to villages. However, the Habsburg Empire's soldiers eventually crushed the revolution. But the 1848 freedom fighters were not defeated in vain—their courage laid the foundation for what was attempted again in 1956 and 1989.", "y1989_title": "June 16 & October 23 – The System Change", "y1989_text": "More than 30 years after 1956, the people's dream finally came true. In 1989, the communist system collapsed across Europe. On June 16, 1989, Imre Nagy and the martyrs of the revolution were ceremonially reburied—finally honoring those who died for freedom in 1956. Then, Soviet soldiers finally left the country they had occupied for 33 years. On October 23, 1989—exactly on the 33rd anniversary of the revolution!—Hungary proclaimed itself a free republic. People celebrated in streets across the nation: the Soviet star was replaced by the Hungarian tricolor, and the Hungarian people could finally decide their own fate. This was the 1989 bloodless revolution—when citizens, organized and peaceful but determined, changed history.", "y2026_title": "April 12 & May 9, 2026 – Hungary's Democracy Birthday", "y2026_text": "On April 12, 2026, the Hungarian people voted out the government that had ruled for 16 years—with ballot papers, civic courage, and determination. Then, on May 9, 2026, a new parliament was formed: Hungary's democracy birthday. This revolution was won not with gunshots, but with the will of the people. For years, many believed change was impossible—but 2026 proved: Hungarians cannot be broken. The spirit of the 1956 revolution and the 1989 system change lives on, and these two days marked themselves in history as the third great milestone on the road to freedom.", "footer_logo": "1956 · The People of Freedom", "footer_sub": "70th Anniversary · 1956–2026", "footer_note": "This page honors the memory of the Hungarian revolution and freedom fight. Created for students – so we never forget what the Hungarian people did for freedom. Hungarians cannot be broken.", "music_btn_aria": "Background music on/off", "menu_aria": "Menu", "hero_aria": "Home hero", "m01_alt": "Students at Polytechnic", "m02_alt": "March to Bem Statue", "m03_alt": "Parliament Demonstration", "m04_alt": "Radio Siege", "m05_alt": "Soviet Tanks", "m06_alt": "Bloody Thursday", "m07_alt": "Republic Square Battle", "m08_alt": "Neutrality Declaration", "m09_alt": "Soviet Attack", "m10_alt": "Pest Lads", "y1848_alt": "1848 Revolution", "y1989_alt": "1989 System Change", "y2026_alt": "2026 Democracy Birthday"}, "de": {"nav_logo": "1956 · 70. Jahrestag", "nav_home": "Startseite", "nav_timeline": "Zeitleiste", "nav_history": "Geschichte", "nav_menu": "Menü", "nav_music_play": "♪ Musik", "nav_music_pause": "❚❚ Pause", "music_title": "Hintergrundmusik an/aus", "hero_eyebrow": "70. Jahrestag · 1956–2026", "hero_title": "Das Volk der Freiheit", "hero_subtitle": "Entdecke die Geschichte, in der der Mut die Angst besiegt hat!", "hero_scroll": "Scrollen", "timeline_label": "Die Tage der Revolution", "timeline_title": "10 Wichtige Momente<br>aus 1956", "timeline_intro": "Im Oktober 1956 vereinigte sich das ungarische Volk – Studenten, Arbeiter und gewöhnliche Menschen – für die Freiheit. Klick auf die Ereignisse, um zu erfahren, was passierte!", "m01_num": "01 · ereignis", "m01_title": "Studenten versammeln sich am Polytechnikum", "m01_date": "22. Oktober 1956 · Polytechnikum Budapest", "m01_text": "Universitätsstudenten trafen sich, weil sie es satt hatten, ohne Freiheit zu leben. Sie schrieben eine Liste mit 16 Forderungen, darunter freie Wahlen und die Aufforderung, dass sowjetische Soldaten das Land verlassen. Dieser mutige Schritt löste die Revolution aus.", "m02_num": "02 · ereignis", "m02_title": "Marsch zum Bem-Denkmal", "m02_date": "23. Oktober 1956 nachmittags · Bem-Platz, Budapest", "m02_text": "Am nächsten Tag schlossen sich Fabrikarbeiter und gewöhnliche Menschen den Studenten an. Eine riesige Menschenmenge marschierte zum Bem-Denkmal. Sie wollten nicht kämpfen – sie wollten friedlich zeigen, dass die Ungarn zusammenstanden. Hier wurde zum ersten Mal das Wappen aus der Mitte der Flagge entfernt, was zum Symbol der Revolution wurde.", "m03_num": "03 · ereignis", "m03_title": "Demonstration am Parlament", "m03_date": "23. Oktober 1956 abends · Kossuth-Platz (Parlament)", "m03_text": "Am Abend hatten sich Hunderttausende vor dem Parlament versammelt. Es war dunkel, daher zündeten Menschen Zeitungen an, um zu sehen. Sie baten den beliebten Politiker Imre Nagy, zu ihnen zu sprechen. Alle spürten, dass etwas Enormes bevorstand.", "m04_num": "04 · ereignis", "m04_title": "Die Radiostürme und der Sturz der Stalin-Statue", "m04_date": "23.–24. Oktober 1956 nacht · Bródy-Sándor-Straße und Felvonulási Platz", "m04_text": "Die Menge ging zum Ungarischen Rundfunk, um ihre Forderungen auszustrahlen, aber bewaffnete Wachen begannen auf sie zu schießen. Die ersten Schüsse fielen. Inzwischen stürzten Menschen in der Stadt die riesige Stalin-Statue um – ein Symbol der Unterdrückung.", "m05_num": "05 · ereignis", "m05_title": "Sowjetische Panzer treffen ein", "m05_date": "24. Oktober 1956 · Straßen von Budapest", "m05_text": "Verängstigt Regierungsführer riefen die sowjetische Armee. Riesige, beängstigende Panzer rollten in Budapests Straßen. Aber die Ungarn flohen nicht – sie errichteten Barrikaden und versuchten sie zu stoppen.", "m06_num": "06 · ereignis", "m06_title": "Blutiger Donnerstag", "m06_date": "25. Oktober 1956 · Kossuth-Platz", "m06_text": "Eine friedliche Menge, die Flaggen trug, wurde am Parlament plötzlich ohne Vorwarnung von Dächern beschossen. Viele unschuldige Menschen starben an diesem Tag. Aber dieses Grauel stärkte nur die Ungarn in ihrem Entschluss, nicht aufzugeben.", "m07_num": "07 · ereignis", "m07_title": "Schlacht am Platz der Republik & Mindszentys Befreiung", "m07_date": "30. Oktober 1956 · Platz der Republik und Felsőpetény", "m07_text": "Heftige Kämpfe brachen zwischen Revolutionären und Wachen aus, die das Parteizentrum schützten. Gleichzeitig befreiten mutige Soldaten Kardinal József Mindszenty aus dem Gefängnis – den Kopf der ungarischen Kirche, der vom bösen Regime ungerechterweise inhaftiert worden war.", "m08_num": "08 · ereignis", "m08_title": "Ungarn erklärt Neutralität", "m08_date": "1. November 1956 · Parlament, Budapest", "m08_text": "Premierminister Imre Nagy kündigte an, dass Ungarn das sowjetische Militärbündnis verlassen und neutral werden würde – wie Österreich. Dies bedeutete, dass Ungarn endlich in Frieden nach seinen eigenen Regeln leben konnte.", "m09_num": "09 · ereignis", "m09_title": "Der sowjetische Angriff – Operation Wirbelsturm", "m09_date": "4. November 1956 · Ganz Ungarn", "m09_text": "In der Morgenröte griffen die sowjetischen Truppen Budapest und große Städte mit überwältigender Kraft an. Imre Nagy bat die Welt um Hilfe, aber niemand kam. Die erbittersten Kämpfe für die Freiheit begannen.", "m10_num": "10 · ereignis", "m10_title": "Der Widerstand der 'Pest-Jungen' & Vergeltung", "m10_date": "November–Dezember 1956 · Corvin-Passage, Széna-Platz", "m10_text": "Junge Jungen und Mädchen – 'Pest-Jungen' genannt – kämpften wochenlang gegen riesige Panzer in den Straßen von Pest. Obwohl die Revolution letztendlich niedergeschlagen wurde und viele inhaftiert oder verbannt wurden, zeigte ihre Tapferkeit der Welt: Ungarn können nicht gebrochen werden.", "quote_text": "Das ungarische Volk hat schon immer die Freiheit geliebt. 1956 zeigte es der Welt, dass Mut keine Grenzen kennt.", "quote_attr": "Erinnerung an die Ungarische Revolution von 1956", "further_label": "Ungarische Geschichte", "further_title": "Andere wichtige<br>Meilensteine", "further_intro": "Das ungarische Volk hat immer die Freiheit geliebt. 1956 war nicht das einzige Mal, dass wir dafür kämpften. Hier sind drei große Meilensteine in der Geschichte der ungarischen Freiheit – einschließlich des neuesten 2026-Wendepunkts, den wir nicht mit Kugeln, sondern mit Bürgermut erkämpften:", "tag_milestone": "✦ Historischer Meilenstein", "y1848_title": "15. März – Die Revolution von 1848", "y1848_text": "Vor langer Zeit kämpfte unsere Urgroßelterngeneration gegen das Habsburgerreich. Im März 1848 versammelten sich Sándor Petőfi und die Jugend des März im Nationalmuseum und listeten auf, wie 1956, auf, was die ungarische Nation wollte. In ihren 12 Forderungen verlangten sie Pressefreiheit, die Abschaffung edler Privilegien, gleiche Besteuerung und das Recht, auf Ungarisch zu unterrichten. Das ganze Land erhob sich – von Städten bis Dörfern. Das Habsburgerreich unterdrückte die Revolution schließlich. Aber die Freiheitskämpfer von 1848 wurden nicht umsonst besiegt – ihr Mut legte den Grundstein für das, was 1956 und 1989 erneut versucht wurde.", "y1989_title": "16. Juni & 23. Oktober – Der Systemwechsel", "y1989_text": "Mehr als 30 Jahre nach 1956 wurde der Traum des Volkes endlich wahr. 1989 kollabierte das kommunistische System in ganz Europa. Am 16. Juni 1989 wurden Imre Nagy und die Märtyrer der Revolution feierlich umgebettet – endlich ehrte man diejenigen, die 1956 für die Freiheit starben. Dann verließen die sowjetischen Soldaten das Land, das sie 33 Jahre lang besetzt hatten. Am 23. Oktober 1989 – genau am 33. Jahrestag der Revolution! – proklamierte Ungarn sich selbst zur freien Republik. Menschen feierten in Straßen überall im Land: Der sowjetische Stern wurde durch die ungarische Trikolore ersetzt, und das ungarische Volk konnte endlich sein eigenes Schicksal bestimmen. Das war die Revolution von 1989 – als Bürger, organisiert und friedlich, aber entschlossen, die Geschichte änderten.", "y2026_title": "12. April & 9. Mai 2026 – Ungarns Demokratie-Geburtstag", "y2026_text": "Am 12. April 2026 stimmte das ungarische Volk ab und entfernte die Regierung, die 16 Jahre lang herrschte – mit Stimmzetteln, Bürgermut und Ausdauer. Dann, am 9. Mai 2026, wurde ein neues Parlament gegründet: Ungarns Demokratie-Geburtstag. Diese Revolution wurde nicht mit Schüssen gewonnen, sondern mit dem Willen des Volkes. Jahrelang glaubten viele, dass Veränderung unmöglich sei – aber 2026 bewies: Ungarn können nicht gebrochen werden. Der Geist der Revolution von 1956 und des Systemwechsels von 1989 lebt weiter, und diese beiden Tage kennzeichneten sich als dritter großer Meilenstein auf dem Weg zur Freiheit.", "footer_logo": "1956 · Das Volk der Freiheit", "footer_sub": "70. Jahrestag · 1956–2026", "footer_note": "Diese Seite ehrt das Andenken an die Ungarische Revolution und den Freiheitskampf. Erstellt für Schüler – damit wir niemals vergessen, was das ungarische Volk für die Freiheit tat. Ungarn können nicht gebrochen werden.", "music_btn_aria": "Hintergrundmusik an/aus", "menu_aria": "Menü", "hero_aria": "Startseite Hero", "m01_alt": "Studenten am Polytechnikum", "m02_alt": "Marsch zum Bem-Denkmal", "m03_alt": "Demonstration am Parlament", "m04_alt": "Radiostürme", "m05_alt": "Sowjetische Panzer", "m06_alt": "Blutiger Donnerstag", "m07_alt": "Schlacht am Platz der Republik", "m08_alt": "Neutralitätserklärung", "m09_alt": "Sowjetischer Angriff", "m10_alt": "Pest-Jungen", "y1848_alt": "Revolution von 1848", "y1989_alt": "Systemwechsel 1989", "y2026_alt": "2026 Demokratie-Geburtstag"}};
+window.CURRENT_LANG = 'hu';
+</script>
 
 <!-- ═══════════════════════════════ JS ═══════════════════════════════ -->
 <script>
@@ -963,7 +1023,7 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
   });
   document.querySelectorAll('.further-card, .fade-up').forEach(function(el) { io.observe(el); });
 
-  /* ─── IMAGE HOVER VIDEO (milestone-img & further-img) ─── */
+  /* ─── IMAGE HOVER VIDEO (milestone-img & further-img) + YOUTUBE ─── */
   (function() {
     var isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     var activeVid  = null;
@@ -978,10 +1038,10 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
         vid.setAttribute('src', src);
         vid.muted        = true;
         vid.loop         = true;
-        vid.playsInline  = true;          // iOS: play inline, not fullscreen
-        vid.setAttribute('playsinline', ''); // belt-and-braces for older iOS
+        vid.playsInline  = true;
+        vid.setAttribute('playsinline', '');
         vid.setAttribute('webkit-playsinline', '');
-        vid.preload      = 'none';        // zero network cost until activated
+        vid.preload      = 'none';
         vid.className    = 'img-hover-video';
         vid.onerror      = function() { vid.style.display = 'none'; };
         wrap.appendChild(vid);
@@ -990,8 +1050,25 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
       return vid;
     }
 
+    function getOrCreateYouTube(wrap) {
+      var yt = wrap._hoverYT;
+      if (!yt) {
+        var ytId = wrap.getAttribute('data-youtube');
+        if (!ytId) return null;
+        yt = document.createElement('iframe');
+        yt.src = 'https://www.youtube.com/embed/' + ytId + '?autoplay=1&mute=0&rel=0&modestbranding=1';
+        yt.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        yt.setAttribute('allowfullscreen', '');
+        yt.referrerPolicy = 'strict-origin-when-cross-origin';
+        yt.className = 'img-hover-video';
+        yt.style.cssText = 'border:0;';
+        wrap.appendChild(yt);
+        wrap._hoverYT = yt;
+      }
+      return yt;
+    }
+
     function playVid(vid) {
-      // load() forces iOS to acknowledge the src before play()
       if (vid.readyState === 0) vid.load();
       var p = vid.play();
       if (p && p.catch) p.catch(function() {});
@@ -999,25 +1076,49 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
 
     function enter(wrap) {
       if (activeWrap === wrap) return;
+      // Hide previous
       if (activeVid) {
         activeVid.classList.remove('visible');
-        activeVid.pause();
+        if (activeVid.tagName === 'VIDEO') activeVid.pause();
       }
-      var vid = getOrCreateVideo(wrap);
-      if (!vid) return;
-      activeVid  = vid;
+
+      // Check if YouTube or local video
+      var ytId = wrap.getAttribute('data-youtube');
+      var media = null;
+      if (ytId) {
+        media = getOrCreateYouTube(wrap);
+      } else {
+        media = getOrCreateVideo(wrap);
+      }
+
+      if (!media) return;
+      activeVid  = media;
       activeWrap = wrap;
-      vid.currentTime = 0;
-      playVid(vid);
-      vid.classList.add('visible');
+
+      if (ytId) {
+        // YouTube - just show it
+        media.classList.add('visible');
+      } else {
+        // Local video - reset and play
+        media.currentTime = 0;
+        playVid(media);
+        media.classList.add('visible');
+      }
     }
 
     function leave(wrap) {
       var vid = wrap._hoverVid;
+      var yt = wrap._hoverYT;
       if (vid) {
         vid.classList.remove('visible');
         setTimeout(function() {
           if (!vid.classList.contains('visible')) vid.pause();
+        }, 420);
+      }
+      if (yt) {
+        yt.classList.remove('visible');
+        setTimeout(function() {
+          if (!yt.classList.contains('visible')) yt.src = '';
         }, 420);
       }
       if (activeWrap === wrap) { activeVid = null; activeWrap = null; }
@@ -1028,41 +1129,33 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
     containers.forEach(function(container) {
       if (!container) return;
 
-      // ── Desktop: mouse events ──
       container.addEventListener('mouseover', function(e) {
-        var wrap = e.target.closest('[data-video]');
+        var wrap = e.target.closest('[data-video], [data-youtube]');
         if (wrap) enter(wrap);
       }, { passive: true });
 
       container.addEventListener('mouseout', function(e) {
-        var wrap = e.target.closest('[data-video]');
+        var wrap = e.target.closest('[data-video], [data-youtube]');
         if (wrap && !wrap.contains(e.relatedTarget)) leave(wrap);
       }, { passive: true });
 
-      // ── Mobile: touch events ──
-      // We use touchend (not touchstart) so we don't interfere with scroll
-      // and so the gesture is clearly intentional (finger lifted = tap)
       container.addEventListener('touchend', function(e) {
-        var wrap = e.target.closest('[data-video]');
+        var wrap = e.target.closest('[data-video], [data-youtube]');
         if (!wrap) return;
-
-        // Only treat as a tap if the finger didn't move (scroll guard)
         var touch = e.changedTouches[0];
         var dx = Math.abs(touch.clientX - (wrap._touchStartX || touch.clientX));
         var dy = Math.abs(touch.clientY - (wrap._touchStartY || touch.clientY));
-        if (dx > 8 || dy > 8) return; // was a scroll, ignore
-
-        e.preventDefault(); // prevent ghost click that would open milestone
-        if (wrap._hoverVid && wrap._hoverVid.classList.contains('visible')) {
+        if (dx > 8 || dy > 8) return;
+        e.preventDefault();
+        if ((wrap._hoverVid || wrap._hoverYT) && (wrap._hoverVid || wrap._hoverYT).classList.contains('visible')) {
           leave(wrap);
         } else {
           enter(wrap);
         }
       }, { passive: false });
 
-      // Record touch start position for scroll detection
       container.addEventListener('touchstart', function(e) {
-        var wrap = e.target.closest('[data-video]');
+        var wrap = e.target.closest('[data-video], [data-youtube]');
         if (!wrap) return;
         var t = e.touches[0];
         wrap._touchStartX = t.clientX;
@@ -1070,7 +1163,6 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
       }, { passive: true });
     });
 
-    // Auto-stop videos that scroll out of view on mobile
     if (isTouchDevice) {
       var scrollTimer = null;
       window.addEventListener('scroll', function() {
@@ -1100,7 +1192,95 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
     document.querySelectorAll('img[loading="lazy"]').forEach(function(img) { imgObs.observe(img); });
   }
 
-  /* ─── 2026 HOVER-TO-PLAY YOUTUBE ─── */
+
+  /* ─── LANGUAGE SWITCHER (with attribute support) ─── */
+  (function() {
+    var langBtns = document.querySelectorAll('.lang-btn');
+    
+    // Mark all milestone elements on load
+    function markMilestones() {
+      document.querySelectorAll('.milestone').forEach(function(ms) {
+        var idx = ms.getAttribute('data-idx');
+        if (idx === null) return;
+        var prefix = 'm' + String(idx).padStart(2, '0');
+        
+        var numEl = ms.querySelector('.milestone-num');
+        var titleEl = ms.querySelector('.milestone-title');
+        var dateEl = ms.querySelector('.milestone-date-loc');
+        var textEl = ms.querySelector('.milestone-text p');
+        
+        if (numEl && !numEl.hasAttribute('data-i18n')) numEl.setAttribute('data-i18n', prefix + '_num');
+        if (titleEl && !titleEl.hasAttribute('data-i18n')) titleEl.setAttribute('data-i18n', prefix + '_title');
+        if (dateEl && !dateEl.hasAttribute('data-i18n')) dateEl.setAttribute('data-i18n', prefix + '_date');
+        if (textEl && !textEl.parentElement.hasAttribute('data-i18n')) textEl.parentElement.setAttribute('data-i18n', prefix + '_text');
+      });
+    }
+    
+    markMilestones();
+    
+    function translatePage(lang) {
+      if (!window.TRANSLATIONS[lang]) return;
+      window.CURRENT_LANG = lang;
+      
+      langBtns.forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+      });
+      
+      // Translate elements with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        var text = window.TRANSLATIONS[lang][key];
+        if (text) {
+          if (key.includes('title') && key.includes('_')) {
+            el.textContent = text;
+          } else if (key.includes('title')) {
+            el.innerHTML = text;
+          } else {
+            el.textContent = text;
+          }
+        }
+      });
+      
+      // Translate aria-labels
+      document.querySelectorAll('[data-aria-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-aria-i18n');
+        var text = window.TRANSLATIONS[lang][key];
+        if (text) el.setAttribute('aria-label', text);
+      });
+      
+      // Translate titles
+      document.querySelectorAll('[data-title-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-title-i18n');
+        var text = window.TRANSLATIONS[lang][key];
+        if (text) el.setAttribute('title', text);
+      });
+      
+      // Translate alt texts
+      document.querySelectorAll('[data-alt-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-alt-i18n');
+        var text = window.TRANSLATIONS[lang][key];
+        if (text) el.setAttribute('alt', text);
+      });
+      
+      try { localStorage.setItem('lang', lang); } catch(e) {}
+    }
+    
+    langBtns.forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        translatePage(btn.getAttribute('data-lang'));
+      });
+    });
+    
+    var savedLang = null;
+    try { savedLang = localStorage.getItem('lang'); } catch(e) {}
+    if (savedLang && window.TRANSLATIONS[savedLang]) {
+      translatePage(savedLang);
+    }
+  });
+
+
+    /* ─── 2026 HOVER-TO-PLAY YOUTUBE ─── */
   (function() {
     var wrap    = document.getElementById('wrap2026');
     var thumb   = document.getElementById('thumb2026');
