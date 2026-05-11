@@ -526,12 +526,12 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
 <body>
 <div id="progress-bar"></div>
 <nav id="navbar">
-  <div class="nav-logo">1956 · 70. Évforduló</div>
+  <div class="nav-logo" data-i18n="nav_logo">1956 · 70. Évforduló</div>
   <ul class="nav-center" id="navLinks">
-    <li><a href="index.html#hero">Kezdőlap</a></li>
-    <li><a href="index.html#timeline">Eseménynaptár</a></li>
-    <li><a href="index.html#further">Történelem</a></li>
-    <li><a href="projekt.html" style="color:var(--gold);opacity:1">A projekt</a></li>
+    <li><a href="index.html#hero" data-i18n="nav_home">Kezdőlap</a></li>
+    <li><a href="index.html#timeline" data-i18n="nav_timeline">Eseménynaptár</a></li>
+    <li><a href="index.html#further" data-i18n="nav_history">Történelem</a></li>
+    <li><a href="projekt.html" style="color:var(--gold);opacity:1" data-i18n="nav_project">A projekt</a></li>
   </ul>
   <div class="nav-right">
     <div class="lang-switcher" id="langSwitcher"><button class="lang-btn active" data-lang="hu" aria-label="Magyar">HU</button><button class="lang-btn" data-lang="en" aria-label="English">EN</button><button class="lang-btn" data-lang="de" aria-label="Deutsch">DE</button></div>
@@ -540,42 +540,87 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
 </nav>
 <header class="project-hero">
   <div class="container">
-    <span class="project-kicker">Diaszpóra · AI · Emlékezet · 2026</span>
-    <h1 class="project-hero-title">’56 a Jövő Szemével</h1>
-    <p class="project-lead">Ez a projekt nem egyszerű emlékoldal, hanem egy nemzetközi, digitális oktatási és kulturális platform: a magyar diaszpórában élő fiatalok a mesterséges intelligencia, a fotó, a videó, a hang és a web eszközeivel teszik újra átélhetővé az 1956-os forradalom örökségét.</p>
-    <div class="project-actions"><a class="project-btn" href="#globalis-premier">Globális premier</a><a class="project-btn secondary" href="index.html">Vissza a főoldalra</a></div>
+    <span class="project-kicker" data-i18n="hero_kicker">Diaszpóra · AI · Emlékezet · 2026</span>
+    <h1 class="project-hero-title" data-i18n="hero_title">’56 a Jövő Szemével</h1>
+    <p class="project-lead" data-i18n="hero_lead">Ez a projekt nem egyszerű emlékoldal, hanem egy nemzetközi, digitális oktatási és kulturális platform: a magyar diaszpórában élő fiatalok a mesterséges intelligencia, a fotó, a videó, a hang és a web eszközeivel teszik újra átélhetővé az 1956-os forradalom örökségét.</p>
+    <div class="project-actions"><a class="project-btn" href="#globalis-premier" data-i18n="btn_global">Globális premier</a><a class="project-btn secondary" href="index.html" data-i18n="btn_home">Vissza a főoldalra</a></div>
   </div>
 </header>
 <section class="project-section">
   <div class="container">
-    <span class="section-label">Mi ez a kezdeményezés?</span>
-    <h2 class="section-title">Digitális híd a múlt és a jövő között</h2>
+    <span class="section-label" data-i18n="intro_label">Mi ez a kezdeményezés?</span>
+    <h2 class="section-title" data-i18n="intro_title">Digitális híd a múlt és a jövő között</h2>
     <div class="gold-line"></div>
-    <p class="section-intro">A program célja, hogy az 1956-os forradalom ne távoli tankönyvi fejezet maradjon, hanem személyes, alkotó élménnyé váljon azoknak a 10–18 éves magyar fiataloknak, akik Magyarországon kívül nőnek fel.</p>
+    <p class="section-intro" data-i18n="intro_text">A program célja, hogy az 1956-os forradalom ne távoli tankönyvi fejezet maradjon, hanem személyes, alkotó élménnyé váljon azoknak a 10–18 éves magyar fiataloknak, akik Magyarországon kívül nőnek fel.</p>
     <div class="project-grid">
-      <article class="project-card"><h3>Nem passzív emlékezés, hanem alkotás</h3><p>A résztvevők nem csupán meghallgatják a múlt történeteit, hanem saját digitális nyelvükön dolgozzák fel azokat. Archív fotók, emigránsinterjúk, személyes családi történetek és AI-alapú vizuális eszközök segítségével filmeket, képeket, narrációkat és oktatási anyagokat hoznak létre.</p></article>
-      <article class="project-card"><h3>A technológia az empátia szolgálatában</h3><p>A mesterséges intelligencia itt nem öncélú látványosság. Eszköz arra, hogy a fiatalok megértsék, mit jelentett 1956 után elhagyni a hazát, új országban új életet kezdeni, és közben megtartani a magyar identitást.</p></article>
-      <article class="project-card"><h3>Be Smart Kids Club</h3><p>A program oktatási hátterét a Be Smart Kids Club adja: egy online digitális alkotóműhely, ahol a fiatalok fotózást, videózást, zenei és hangalapú szerkesztést, AI-használatot, weboldalkészítést, digitális lábnyom-építést és kritikus médiaértést tanulnak.</p></article>
-      <article class="project-card"><h3>Bécsből indul, világméretűvé válik</h3><p>A projekt központja a Bécsi Magyar Iskola és a VIPACH közössége, de a cél nem helyi. A modell úgy épül fel, hogy később bármely magyar szervezet, hétvégi magyar iskola vagy diaszpóra-közösség át tudja venni és saját helyszínén használni tudja.</p></article>
-      <article class="project-card project-wide"><h3>Mi készül el?</h3><ul><li>AI-val támogatott, fiatalok által alkotott rövidfilmek és vizuális történetek 1956-ról.</li><li>Felújított, színezett és animált archív fotók, amelyek közelebb hozzák a történelmet a digitális generációhoz.</li><li>Nyomtatható, letölthető, helyben kiállítható anyagok magyar közösségeknek világszerte.</li><li>QR-kódokkal összekötött online tartalmak, hogy a fizikai kiállítás és a digitális élmény egy rendszerben működjön.</li></ul></article>
+      <article class="project-card"><h3 data-i18n="card1_title">Nem passzív emlékezés, hanem alkotás</h3><p data-i18n="card1_text">A résztvevők nem csupán meghallgatják a múlt történeteit, hanem saját digitális nyelvükön dolgozzák fel azokat. Archív fotók, emigránsinterjúk, személyes családi történetek és AI-alapú vizuális eszközök segítségével filmeket, képeket, narrációkat és oktatási anyagokat hoznak létre.</p></article>
+      <article class="project-card"><h3 data-i18n="card2_title">A technológia az empátia szolgálatában</h3><p data-i18n="card2_text">A mesterséges intelligencia itt nem öncélú látványosság. Eszköz arra, hogy a fiatalok megértsék, mit jelentett 1956 után elhagyni a hazát, új országban új életet kezdeni, és közben megtartani a magyar identitást.</p></article>
+      <article class="project-card"><h3 data-i18n="card3_title">Be Smart Kids Club</h3><p data-i18n="card3_text">A program oktatási hátterét a Be Smart Kids Club adja: egy online digitális alkotóműhely, ahol a fiatalok fotózást, videózást, zenei és hangalapú szerkesztést, AI-használatot, weboldalkészítést, digitális lábnyom-építést és kritikus médiaértést tanulnak.</p></article>
+      <article class="project-card"><h3 data-i18n="card4_title">Bécsből indul, világméretűvé válik</h3><p data-i18n="card4_text">A projekt központja a Bécsi Magyar Iskola és a VIPACH közössége, de a cél nem helyi. A modell úgy épül fel, hogy később bármely magyar szervezet, hétvégi magyar iskola vagy diaszpóra-közösség át tudja venni és saját helyszínén használni tudja.</p></article>
+      <article class="project-card project-wide"><h3 data-i18n="deliver_title">Mi készül el?</h3><ul><li data-i18n="deliver_1">AI-val támogatott, fiatalok által alkotott rövidfilmek és vizuális történetek 1956-ról.</li><li data-i18n="deliver_2">Felújított, színezett és animált archív fotók, amelyek közelebb hozzák a történelmet a digitális generációhoz.</li><li data-i18n="deliver_3">Nyomtatható, letölthető, helyben kiállítható anyagok magyar közösségeknek világszerte.</li><li data-i18n="deliver_4">QR-kódokkal összekötött online tartalmak, hogy a fizikai kiállítás és a digitális élmény egy rendszerben működjön.</li></ul></article>
     </div>
-    <div class="project-metrics"><div class="metric"><strong>10–18</strong><span>éves diaszpóra fiataloknak</span></div><div class="metric"><strong>2026</strong><span>az 1956-os forradalom 70. évfordulója</span></div><div class="metric"><strong>október 23.</strong><span>a teljes bemutató céldátuma</span></div><div class="metric"><strong>világszerte</strong><span>magyar iskoláknak és szervezeteknek</span></div></div>
+    <div class="project-metrics"><div class="metric"><strong>10–18</strong><span data-i18n="metric1">éves diaszpóra fiataloknak</span></div><div class="metric"><strong>2026</strong><span data-i18n="metric2">az 1956-os forradalom 70. évfordulója</span></div><div class="metric"><strong data-i18n="metric3_num">október 23.</strong><span data-i18n="metric3">a teljes bemutató céldátuma</span></div><div class="metric"><strong data-i18n="metric4_num">világszerte</strong><span data-i18n="metric4">magyar iskoláknak és szervezeteknek</span></div></div>
   </div>
 </section>
 <section class="global-block" id="globalis-premier">
   <div class="container"><div class="global-panel">
-    <span class="section-label">Stratégiai összefoglaló</span>
-    <h2>Egy közös magyar premier, amelyet a világ bármely pontján meg lehet rendezni</h2>
-    <p>Az „’56 a Jövő Szemével” egy olyan kulturális-edukációs projekt, amely egyszerre szolgálja az emlékezetpolitikát, a digitális kompetenciafejlesztést és a diaszpóra-közösségek megerősítését. A lényege egyszerű: a fiatalok nem nézői lesznek az emlékezésnek, hanem alkotói.</p>
-    <p>Az oldal folyamatosan frissül, és 2026. október 23-ra készül el teljes formájában. Addig fokozatosan kerülnek fel a történelmi tartalmak, oktatási anyagok, filmek, képek, letölthető nyomdai fájlok és a helyi megvalósítást segítő segédletek.</p>
-    <p>A cél, hogy a világ összes magyar szervezete és hétvégi magyar iskolája szabadon használhassa az anyagokat: letölthesse, kinyomtathassa, kiállíthassa, tanórán feldolgozhassa, vagy saját helyi megemlékezésébe beépíthesse.</p>
-    <p>A díszbemutató koncepciója globális: 2026. október 23-án ugyanaz az üzenet egyszerre jelenhet meg Bécsben, New Yorkban, Torontóban, Sydney-ben, Londonban, Erdélyben, Felvidéken és bárhol, ahol magyar közösség őrzi 1956 emlékét.</p>
-    <div class="global-list"><div><strong>Oktatás:</strong><br>digitális készségek, AI-használat, médiaértés és alkotói gondolkodás.</div><div><strong>Közösség:</strong><br>kapcsolódás a világban élő magyar fiatalok és szervezetek között.</div><div><strong>Emlékezet:</strong><br>1956 átadása olyan formában, amely a mai fiatalok számára is érthető és élő.</div></div>
-    <p class="source-note">A projekt a VIPACH „’56 a Jövő Szemével” kezdeményezésére és a Be Smart Kids Club digitális alkotóműhelyének oktatási keretére épül.</p>
+    <span class="section-label" data-i18n="global_label">Stratégiai összefoglaló</span>
+    <h2 data-i18n="global_title">Egy közös magyar premier, amelyet a világ bármely pontján meg lehet rendezni</h2>
+    <p data-i18n="global_p1">Az „’56 a Jövő Szemével” egy olyan kulturális-edukációs projekt, amely egyszerre szolgálja az emlékezetpolitikát, a digitális kompetenciafejlesztést és a diaszpóra-közösségek megerősítését. A lényege egyszerű: a fiatalok nem nézői lesznek az emlékezésnek, hanem alkotói.</p>
+    <p data-i18n="global_p2">Az oldal folyamatosan frissül, és 2026. október 23-ra készül el teljes formájában. Addig fokozatosan kerülnek fel a történelmi tartalmak, oktatási anyagok, filmek, képek, letölthető nyomdai fájlok és a helyi megvalósítást segítő segédletek.</p>
+    <p data-i18n="global_p3">A cél, hogy a világ összes magyar szervezete és hétvégi magyar iskolája szabadon használhassa az anyagokat: letölthesse, kinyomtathassa, kiállíthassa, tanórán feldolgozhassa, vagy saját helyi megemlékezésébe beépíthesse.</p>
+    <p data-i18n="global_p4">A díszbemutató koncepciója globális: 2026. október 23-án ugyanaz az üzenet egyszerre jelenhet meg Bécsben, New Yorkban, Torontóban, Sydney-ben, Londonban, Erdélyben, Felvidéken és bárhol, ahol magyar közösség őrzi 1956 emlékét.</p>
+    <div class="global-list"><div data-i18n="global_item1"><strong>Oktatás:</strong><br>digitális készségek, AI-használat, médiaértés és alkotói gondolkodás.</div><div data-i18n="global_item2"><strong>Közösség:</strong><br>kapcsolódás a világban élő magyar fiatalok és szervezetek között.</div><div data-i18n="global_item3"><strong>Emlékezet:</strong><br>1956 átadása olyan formában, amely a mai fiatalok számára is érthető és élő.</div></div>
+    <p class="source-note" data-i18n="source_note">A projekt a VIPACH „’56 a Jövő Szemével” kezdeményezésére és a Be Smart Kids Club digitális alkotóműhelyének oktatási keretére épül.</p>
   </div></div>
 </section>
-<footer><div class="container"><div class="footer-flags">🇭🇺</div><div class="footer-logo">’56 a Jövő Szemével</div><div class="footer-sub">Globális magyar digitális emlékezetprojekt · 2026</div><div class="footer-divider"></div><p class="footer-note">A projektoldal folyamatosan bővül. A teljes, letölthető és nyomtatható anyag 2026. október 23-ra készül el.</p></div></footer>
+<footer><div class="container"><div class="footer-flags">🇭🇺</div><div class="footer-logo" data-i18n="footer_logo">’56 a Jövő Szemével</div><div class="footer-sub" data-i18n="footer_sub">Globális magyar digitális emlékezetprojekt · 2026</div><div class="footer-divider"></div><p class="footer-note" data-i18n="footer_note">A projektoldal folyamatosan bővül. A teljes, letölthető és nyomtatható anyag 2026. október 23-ra készül el.</p></div></footer>
 <script>
+window.TRANSLATIONS = {
+  hu: {
+    page_title: "’56 a Jövő Szemével | Projektleírás",
+    page_description: "Az ’56 a Jövő Szemével projekt közérthető bemutatása: diaszpóra fiatalok, mesterséges intelligencia, digitális emlékezet és globális magyar premier 2026. október 23-án.",
+    nav_logo: "1956 · 70. Évforduló", nav_home: "Kezdőlap", nav_timeline: "Eseménynaptár", nav_history: "Történelem", nav_project: "A projekt", nav_menu: "Menü",
+    hero_kicker: "Diaszpóra · AI · Emlékezet · 2026", hero_title: "’56 a Jövő Szemével", hero_lead: "Ez a projekt nem egyszerű emlékoldal, hanem egy nemzetközi, digitális oktatási és kulturális platform: a magyar diaszpórában élő fiatalok a mesterséges intelligencia, a fotó, a videó, a hang és a web eszközeivel teszik újra átélhetővé az 1956-os forradalom örökségét.", btn_global: "Globális premier", btn_home: "Vissza a főoldalra",
+    intro_label: "Mi ez a kezdeményezés?", intro_title: "Digitális híd a múlt és a jövő között", intro_text: "A program célja, hogy az 1956-os forradalom ne távoli tankönyvi fejezet maradjon, hanem személyes, alkotó élménnyé váljon azoknak a 10–18 éves magyar fiataloknak, akik Magyarországon kívül nőnek fel.",
+    card1_title: "Nem passzív emlékezés, hanem alkotás", card1_text: "A résztvevők nem csupán meghallgatják a múlt történeteit, hanem saját digitális nyelvükön dolgozzák fel azokat. Archív fotók, emigránsinterjúk, személyes családi történetek és AI-alapú vizuális eszközök segítségével filmeket, képeket, narrációkat és oktatási anyagokat hoznak létre.",
+    card2_title: "A technológia az empátia szolgálatában", card2_text: "A mesterséges intelligencia itt nem öncélú látványosság. Eszköz arra, hogy a fiatalok megértsék, mit jelentett 1956 után elhagyni a hazát, új országban új életet kezdeni, és közben megtartani a magyar identitást.",
+    card3_title: "Be Smart Kids Club", card3_text: "A program oktatási hátterét a Be Smart Kids Club adja: egy online digitális alkotóműhely, ahol a fiatalok fotózást, videózást, zenei és hangalapú szerkesztést, AI-használatot, weboldalkészítést, digitális lábnyom-építést és kritikus médiaértést tanulnak.",
+    card4_title: "Bécsből indul, világméretűvé válik", card4_text: "A projekt központja a Bécsi Magyar Iskola és a VIPACH közössége, de a cél nem helyi. A modell úgy épül fel, hogy később bármely magyar szervezet, hétvégi magyar iskola vagy diaszpóra-közösség át tudja venni és saját helyszínén használni tudja.",
+    deliver_title: "Mi készül el?", deliver_1: "AI-val támogatott, fiatalok által alkotott rövidfilmek és vizuális történetek 1956-ról.", deliver_2: "Felújított, színezett és animált archív fotók, amelyek közelebb hozzák a történelmet a digitális generációhoz.", deliver_3: "Nyomtatható, letölthető, helyben kiállítható anyagok magyar közösségeknek világszerte.", deliver_4: "QR-kódokkal összekötött online tartalmak, hogy a fizikai kiállítás és a digitális élmény egy rendszerben működjön.",
+    metric1: "éves diaszpóra fiataloknak", metric2: "az 1956-os forradalom 70. évfordulója", metric3_num: "október 23.", metric3: "a teljes bemutató céldátuma", metric4_num: "világszerte", metric4: "magyar iskoláknak és szervezeteknek",
+    global_label: "Stratégiai összefoglaló", global_title: "Egy közös magyar premier, amelyet a világ bármely pontján meg lehet rendezni", global_p1: "Az „’56 a Jövő Szemével” egy olyan kulturális-edukációs projekt, amely egyszerre szolgálja az emlékezetpolitikát, a digitális kompetenciafejlesztést és a diaszpóra-közösségek megerősítését. A lényege egyszerű: a fiatalok nem nézői lesznek az emlékezésnek, hanem alkotói.", global_p2: "Az oldal folyamatosan frissül, és 2026. október 23-ra készül el teljes formájában. Addig fokozatosan kerülnek fel a történelmi tartalmak, oktatási anyagok, filmek, képek, letölthető nyomdai fájlok és a helyi megvalósítást segítő segédletek.", global_p3: "A cél, hogy a világ összes magyar szervezete és hétvégi magyar iskolája szabadon használhassa az anyagokat: letölthesse, kinyomtathassa, kiállíthassa, tanórán feldolgozhassa, vagy saját helyi megemlékezésébe beépíthesse.", global_p4: "A díszbemutató koncepciója globális: 2026. október 23-án ugyanaz az üzenet egyszerre jelenhet meg Bécsben, New Yorkban, Torontóban, Sydney-ben, Londonban, Erdélyben, Felvidéken és bárhol, ahol magyar közösség őrzi 1956 emlékét.", global_item1: "<strong>Oktatás:</strong><br>digitális készségek, AI-használat, médiaértés és alkotói gondolkodás.", global_item2: "<strong>Közösség:</strong><br>kapcsolódás a világban élő magyar fiatalok és szervezetek között.", global_item3: "<strong>Emlékezet:</strong><br>1956 átadása olyan formában, amely a mai fiatalok számára is érthető és élő.", source_note: "A projekt a VIPACH „’56 a Jövő Szemével” kezdeményezésére és a Be Smart Kids Club digitális alkotóműhelyének oktatási keretére épül.", footer_logo: "’56 a Jövő Szemével", footer_sub: "Globális magyar digitális emlékezetprojekt · 2026", footer_note: "A projektoldal folyamatosan bővül. A teljes, letölthető és nyomtatható anyag 2026. október 23-ra készül el."
+  },
+  en: {
+    page_title: "’56 Through the Eyes of the Future | Project Overview",
+    page_description: "A clear overview of the ’56 Through the Eyes of the Future project: diaspora youth, artificial intelligence, digital memory and a global Hungarian premiere on 23 October 2026.",
+    nav_logo: "1956 · 70th Anniversary", nav_home: "Home", nav_timeline: "Timeline", nav_history: "History", nav_project: "The Project", nav_menu: "Menu",
+    hero_kicker: "Diaspora · AI · Memory · 2026", hero_title: "’56 Through the Eyes of the Future", hero_lead: "This is not simply a memorial website. It is an international digital education and cultural platform where young Hungarians in the diaspora use artificial intelligence, photography, video, sound and the web to make the legacy of the 1956 Revolution vivid again.", btn_global: "Global premiere", btn_home: "Back to homepage",
+    intro_label: "What is this initiative?", intro_title: "A digital bridge between memory and the future", intro_text: "The goal is to ensure that the 1956 Revolution is not reduced to a distant textbook chapter, but becomes a personal, creative experience for Hungarian young people aged 10–18 who are growing up outside Hungary.",
+    card1_title: "Not passive commemoration, but creation", card1_text: "Participants do not merely listen to stories from the past. They reinterpret them in their own digital language. With archival photos, diaspora interviews, family memories and AI-supported visual tools, they create films, images, narrations and educational materials.",
+    card2_title: "Technology in the service of empathy", card2_text: "Artificial intelligence is not used here as a spectacle for its own sake. It becomes a tool that helps young people understand what it meant after 1956 to leave one’s homeland, build a new life in another country, and still preserve Hungarian identity.",
+    card3_title: "Be Smart Kids Club", card3_text: "The educational foundation is provided by Be Smart Kids Club: an online digital creative workshop where young people learn photography, video, music and audio editing, AI use, website creation, digital footprint building and critical media literacy.",
+    card4_title: "Starting in Vienna, designed for the world", card4_text: "The project is rooted in the Vienna Hungarian School and the VIPACH community, but its ambition is not local. The model is built so that any Hungarian organization, weekend Hungarian school or diaspora community can later adopt it and use it in its own location.",
+    deliver_title: "What will be created?", deliver_1: "AI-supported short films and visual stories about 1956 created by young people.", deliver_2: "Restored, colorized and animated archival photographs that bring history closer to the digital generation.", deliver_3: "Printable, downloadable and locally exhibitable materials for Hungarian communities worldwide.", deliver_4: "Online content connected through QR codes, so physical exhibitions and digital experiences operate as one system.",
+    metric1: "for diaspora youth", metric2: "the 70th anniversary of the 1956 Revolution", metric3_num: "23 October", metric3: "target date for the full presentation", metric4_num: "worldwide", metric4: "for Hungarian schools and organizations",
+    global_label: "Strategic summary", global_title: "One shared Hungarian premiere that can be staged anywhere in the world", global_p1: "’56 Through the Eyes of the Future is a cultural and educational project that simultaneously supports historical memory, digital competence development and the strengthening of diaspora communities. Its core idea is simple: young people will not be spectators of remembrance; they will become its creators.", global_p2: "The website will be continuously updated and will reach its complete form by 23 October 2026. Until then, historical content, educational materials, films, images, downloadable print files and local implementation guides will be added step by step.", global_p3: "The aim is for Hungarian organizations and weekend Hungarian schools around the world to use the materials freely: download them, print them, exhibit them, process them in class, or integrate them into their own local commemorations.", global_p4: "The premiere concept is global: on 23 October 2026, the same message can appear simultaneously in Vienna, New York, Toronto, Sydney, London, Transylvania, Upper Hungary and anywhere a Hungarian community preserves the memory of 1956.", global_item1: "<strong>Education:</strong><br>digital skills, AI use, media literacy and creative thinking.", global_item2: "<strong>Community:</strong><br>connection between Hungarian young people and organizations around the world.", global_item3: "<strong>Memory:</strong><br>passing on 1956 in a form that is clear, relevant and alive for today’s young generation.", source_note: "The project is based on VIPACH’s ’56 Through the Eyes of the Future initiative and the educational framework of the Be Smart Kids Club digital creative workshop.", footer_logo: "’56 Through the Eyes of the Future", footer_sub: "Global Hungarian digital memory project · 2026", footer_note: "The project page will continue to expand. The complete downloadable and printable material will be ready by 23 October 2026."
+  },
+  de: {
+    page_title: "’56 mit den Augen der Zukunft | Projektübersicht",
+    page_description: "Eine verständliche Vorstellung des Projekts ’56 mit den Augen der Zukunft: Diaspora-Jugendliche, künstliche Intelligenz, digitale Erinnerung und eine weltweite ungarische Premiere am 23. Oktober 2026.",
+    nav_logo: "1956 · 70. Jahrestag", nav_home: "Startseite", nav_timeline: "Zeitleiste", nav_history: "Geschichte", nav_project: "Das Projekt", nav_menu: "Menü",
+    hero_kicker: "Diaspora · KI · Erinnerung · 2026", hero_title: "’56 mit den Augen der Zukunft", hero_lead: "Dieses Projekt ist nicht einfach eine Gedenkseite, sondern eine internationale digitale Bildungs- und Kulturplattform. Junge Ungarinnen und Ungarn in der Diaspora nutzen künstliche Intelligenz, Fotografie, Video, Ton und Webtechnologien, um das Erbe der Revolution von 1956 wieder erlebbar zu machen.", btn_global: "Globale Premiere", btn_home: "Zurück zur Startseite",
+    intro_label: "Was ist diese Initiative?", intro_title: "Eine digitale Brücke zwischen Vergangenheit und Zukunft", intro_text: "Ziel des Programms ist es, die Revolution von 1956 nicht als fernes Kapitel im Schulbuch stehen zu lassen, sondern sie für ungarische Jugendliche im Alter von 10 bis 18 Jahren, die außerhalb Ungarns aufwachsen, zu einer persönlichen und kreativen Erfahrung zu machen.",
+    card1_title: "Keine passive Erinnerung, sondern aktives Gestalten", card1_text: "Die Teilnehmenden hören nicht nur Geschichten aus der Vergangenheit. Sie verarbeiten diese in ihrer eigenen digitalen Sprache. Mithilfe von Archivfotos, Interviews mit Ausgewanderten, Familiengeschichten und KI-gestützten visuellen Werkzeugen entstehen Filme, Bilder, Erzählungen und Unterrichtsmaterialien.",
+    card2_title: "Technologie im Dienst der Empathie", card2_text: "Künstliche Intelligenz ist hier keine bloße technische Attraktion. Sie ist ein Werkzeug, das Jugendlichen hilft zu verstehen, was es nach 1956 bedeutete, die Heimat zu verlassen, in einem neuen Land ein neues Leben zu beginnen und dabei die ungarische Identität zu bewahren.",
+    card3_title: "Be Smart Kids Club", card3_text: "Den pädagogischen Rahmen bildet der Be Smart Kids Club: eine digitale Online-Kreativwerkstatt, in der Jugendliche Fotografie, Video, Musik- und Tonbearbeitung, KI-Anwendung, Webseitenerstellung, digitalen Identitätsaufbau und kritische Medienkompetenz lernen.",
+    card4_title: "Aus Wien gestartet, für die Welt gedacht", card4_text: "Das Projekt hat seinen Ausgangspunkt in der Ungarischen Schule Wien und in der VIPACH-Community, doch sein Ziel ist nicht lokal begrenzt. Das Modell ist so aufgebaut, dass es später jede ungarische Organisation, Wochenendschule oder Diaspora-Gemeinschaft übernehmen und vor Ort einsetzen kann.",
+    deliver_title: "Was entsteht?", deliver_1: "KI-gestützte Kurzfilme und visuelle Geschichten über 1956, gestaltet von Jugendlichen.", deliver_2: "Restaurierte, kolorierte und animierte Archivfotos, die Geschichte der digitalen Generation näherbringen.", deliver_3: "Druckbare, herunterladbare und vor Ort ausstellbare Materialien für ungarische Gemeinschaften weltweit.", deliver_4: "Über QR-Codes verbundene Online-Inhalte, damit physische Ausstellung und digitales Erlebnis als ein gemeinsames System funktionieren.",
+    metric1: "für Jugendliche in der Diaspora", metric2: "der 70. Jahrestag der Revolution von 1956", metric3_num: "23. Oktober", metric3: "Zieldatum für die vollständige Präsentation", metric4_num: "weltweit", metric4: "für ungarische Schulen und Organisationen",
+    global_label: "Strategische Zusammenfassung", global_title: "Eine gemeinsame ungarische Premiere, die überall auf der Welt stattfinden kann", global_p1: "’56 mit den Augen der Zukunft ist ein kultur- und bildungsorientiertes Projekt, das historische Erinnerung, digitale Kompetenzentwicklung und die Stärkung von Diaspora-Gemeinschaften miteinander verbindet. Der Kern ist einfach: Jugendliche sind nicht nur Zuschauer des Gedenkens, sondern seine Gestalter.", global_p2: "Die Website wird laufend erweitert und bis zum 23. Oktober 2026 in vollständiger Form fertiggestellt. Bis dahin werden historische Inhalte, Unterrichtsmaterialien, Filme, Bilder, herunterladbare Druckdateien und Hilfen für die lokale Umsetzung schrittweise ergänzt.", global_p3: "Ziel ist, dass ungarische Organisationen und Wochenendschulen weltweit die Materialien frei nutzen können: herunterladen, ausdrucken, ausstellen, im Unterricht bearbeiten oder in ihre eigenen lokalen Gedenkveranstaltungen integrieren.", global_p4: "Das Konzept der Premiere ist global: Am 23. Oktober 2026 kann dieselbe Botschaft gleichzeitig in Wien, New York, Toronto, Sydney, London, Siebenbürgen, der Oberen Ungarischen Region und überall dort erscheinen, wo eine ungarische Gemeinschaft die Erinnerung an 1956 bewahrt.", global_item1: "<strong>Bildung:</strong><br>digitale Kompetenzen, KI-Nutzung, Medienverständnis und kreatives Denken.", global_item2: "<strong>Gemeinschaft:</strong><br>Verbindung zwischen ungarischen Jugendlichen und Organisationen auf der ganzen Welt.", global_item3: "<strong>Erinnerung:</strong><br>Weitergabe von 1956 in einer Form, die für heutige Jugendliche verständlich, relevant und lebendig ist.", source_note: "Das Projekt baut auf der VIPACH-Initiative ’56 mit den Augen der Zukunft und dem pädagogischen Rahmen der digitalen Kreativwerkstatt Be Smart Kids Club auf.", footer_logo: "’56 mit den Augen der Zukunft", footer_sub: "Globales ungarisches digitales Erinnerungsprojekt · 2026", footer_note: "Die Projektseite wird laufend erweitert. Das vollständige herunterladbare und druckbare Material wird bis zum 23. Oktober 2026 fertiggestellt."
+  }
+};
+window.CURRENT_LANG = 'hu';
 const progressBar = document.getElementById('progress-bar');
 window.addEventListener('scroll', () => {
   const h = document.documentElement;
@@ -585,6 +630,29 @@ window.addEventListener('scroll', () => {
 const hamburger = document.getElementById('hamburger');
 const navLinks = document.getElementById('navLinks');
 if (hamburger && navLinks) hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+(function() {
+  const langBtns = document.querySelectorAll('.lang-btn');
+  function translatePage(lang) {
+    const dict = window.TRANSLATIONS[lang];
+    if (!dict) return;
+    window.CURRENT_LANG = lang;
+    document.documentElement.lang = lang;
+    if (dict.page_title) document.title = dict.page_title;
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription && dict.page_description) metaDescription.setAttribute('content', dict.page_description);
+    langBtns.forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-lang') === lang));
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (typeof dict[key] !== 'undefined') el.innerHTML = dict[key];
+    });
+    if (hamburger && dict.nav_menu) hamburger.setAttribute('aria-label', dict.nav_menu);
+    try { localStorage.setItem('lang', lang); } catch(e) {}
+  }
+  langBtns.forEach(btn => btn.addEventListener('click', () => translatePage(btn.getAttribute('data-lang'))));
+  let savedLang = null;
+  try { savedLang = localStorage.getItem('lang'); } catch(e) {}
+  translatePage(savedLang && window.TRANSLATIONS[savedLang] ? savedLang : 'hu');
+})();
 </script>
 </body>
 </html>
