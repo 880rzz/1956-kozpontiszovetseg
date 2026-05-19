@@ -8,6 +8,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Oswald:wght@300;400;600&display=swap" rel="stylesheet">
+<!-- Participant portraits: preloaded for fastest possible loading -->
+<link rel="preload" as="image" href="user1.png" fetchpriority="high">
+<link rel="preload" as="image" href="user2.png" fetchpriority="high">
+<link rel="preload" as="image" href="user3.png" fetchpriority="high">
+<link rel="preload" as="image" href="user4.png" fetchpriority="high">
+<link rel="preload" as="image" href="user5.png" fetchpriority="high">
+<link rel="preload" as="image" href="user6.png" fetchpriority="high">
 <style>
 :root {
   --burgundy:     #6B0F1A;
@@ -813,7 +820,7 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
     </div>
     <div class="participants-grid">
       <article class="participant-card">
-        <div class="participant-portrait"><img src="user1.png" alt="Perjési Bálint portréja" loading="lazy"></div>
+        <div class="participant-portrait"><img src="user1.png" alt="Perjési Bálint portréja" width="800" height="800" loading="eager" fetchpriority="high" decoding="async"></div>
         <div class="participant-content">
           <div class="participant-meta"><span class="participant-index">01</span><span class="participant-astro" data-i18n="participant1_astro">Csillagjegy: Bika · Kínai horoszkóp: Sárkány éve</span></div>
           <h3 class="participant-name" data-i18n="participant1_name">Perjési Bálint</h3>
@@ -821,7 +828,7 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
         </div>
       </article>
       <article class="participant-card">
-        <div class="participant-portrait"><img src="user2.png" alt="tam portréja" loading="lazy"></div>
+        <div class="participant-portrait"><img src="user2.png" alt="tam portréja" width="800" height="800" loading="eager" fetchpriority="high" decoding="async"></div>
         <div class="participant-content">
           <div class="participant-meta"><span class="participant-index">02</span><span class="participant-astro" data-i18n="participant2_astro">Csillagjegy: Bika · Kínai horoszkóp: Kígyó éve</span></div>
           <h3 class="participant-name" data-i18n="participant2_name">tam</h3>
@@ -829,7 +836,7 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
         </div>
       </article>
       <article class="participant-card">
-        <div class="participant-portrait"><img src="user3.png" alt="greta portréja" loading="lazy"></div>
+        <div class="participant-portrait"><img src="user3.png" alt="greta portréja" width="800" height="800" loading="eager" fetchpriority="high" decoding="async"></div>
         <div class="participant-content">
           <div class="participant-meta"><span class="participant-index">03</span><span class="participant-astro" data-i18n="participant3_astro">Csillagjegy: Halak · Kínai horoszkóp: Tigris éve</span></div>
           <h3 class="participant-name" data-i18n="participant3_name">greta</h3>
@@ -837,7 +844,7 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
         </div>
       </article>
       <article class="participant-card">
-        <div class="participant-portrait"><img src="user4.png" alt="Marcell Alex portréja" loading="lazy"></div>
+        <div class="participant-portrait"><img src="user4.png" alt="Marcell Alex portréja" width="800" height="800" loading="eager" fetchpriority="high" decoding="async"></div>
         <div class="participant-content">
           <div class="participant-meta"><span class="participant-index">04</span><span class="participant-astro" data-i18n="participant4_astro">Csillagjegy: Halak · Kínai horoszkóp: Tigris éve</span></div>
           <h3 class="participant-name" data-i18n="participant4_name">Marcell Alex</h3>
@@ -845,7 +852,7 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
         </div>
       </article>
       <article class="participant-card">
-        <div class="participant-portrait"><img src="user5.png" alt="Merlin portréja" loading="lazy"></div>
+        <div class="participant-portrait"><img src="user5.png" alt="Merlin portréja" width="800" height="800" loading="eager" fetchpriority="high" decoding="async"></div>
         <div class="participant-content">
           <div class="participant-meta"><span class="participant-index">05</span><span class="participant-astro" data-i18n="participant5_astro">Csillagjegy: Bika · Kínai horoszkóp: Kecske éve</span></div>
           <h3 class="participant-name" data-i18n="participant5_name">Merlin</h3>
@@ -853,7 +860,7 @@ footer { background: #111; border-top: 1px solid rgba(201,168,76,0.12); padding:
         </div>
       </article>
       <article class="participant-card">
-        <div class="participant-portrait"><img src="user6.png" alt="Judisa (Judit) portréja" loading="lazy"></div>
+        <div class="participant-portrait"><img src="user6.png" alt="Judisa (Judit) portréja" width="800" height="800" loading="eager" fetchpriority="high" decoding="async"></div>
         <div class="participant-content">
           <div class="participant-meta"><span class="participant-index">06</span><span class="participant-astro" data-i18n="participant6_astro">Csillagjegy: Bika · Kínai horoszkóp: Bivaly éve</span></div>
           <h3 class="participant-name" data-i18n="participant6_name">Judisa (Judit)</h3>
