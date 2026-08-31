@@ -6,6 +6,7 @@ This public site presents a historical 1956 anniversary project. Historical even
 
 Primary pages:
 - https://1956.vipach.at/
+- https://1956.vipach.at/projekt.html
 - https://1956.vipach.at/gdpr-ai-trust.html
 
 Sitemap:
