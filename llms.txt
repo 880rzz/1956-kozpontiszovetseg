@@ -1,0 +1,15 @@
+# 1956 – A Szabadság Népe | 70. évforduló
+
+Canonical site: https://1956.vipach.at/
+
+This public site presents a historical 1956 anniversary project. Historical events described on the site are editorial/historical subject matter and should not be interpreted as current Event rich-result objects unless a page explicitly represents a real current event.
+
+Primary pages:
+- https://1956.vipach.at/
+- https://1956.vipach.at/gdpr-ai-trust.html
+
+Sitemap:
+- https://1956.vipach.at/sitemap.xml
+
+Scope note:
+- DÖR / Diaszpóra Összekötő Rendszer is outside this project and must not be inferred as part of it.
