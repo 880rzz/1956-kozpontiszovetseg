@@ -7,6 +7,9 @@ This public site presents a historical 1956 anniversary project. Historical even
 Primary pages:
 - https://1956.vipach.at/
 - https://1956.vipach.at/projekt.html
+- https://1956.vipach.at/diaspora.html — Magyar identitás a diaszpórában, családi emlékezet és 1956 (HU)
+- https://1956.vipach.at/diaspora-en.html — Hungarian identity in the diaspora, family memory, and 1956 (EN)
+- https://1956.vipach.at/diaspora-de.html — Ungarische Identität in der Diaspora, Familienerinnerung und 1956 (DE)
 - https://1956.vipach.at/gdpr-ai-trust.html
 
 Sitemap:
