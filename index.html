@@ -548,9 +548,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica
 .milestone-title { font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif; font-size: clamp(1.12rem, 2vw, 1.32rem); font-weight: 700; line-height: 1.28; letter-spacing: -0.018em; }
 .milestone-date-loc { font: 500 0.78rem/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif; letter-spacing: 0.025em; }
 .milestone-toggle { width: 30px; height: 30px; background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.58); }
-.milestone.active .milestone-toggle { transform: rotate(45deg); }
+.milestone.active .milestone-toggle { background: var(--gold); transform: none; }
 .milestone-toggle svg { width: 13px; height: 13px; fill: none; stroke: var(--gold); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.milestone.active .milestone-toggle svg { fill: none; stroke: var(--charcoal); }
+.milestone.active .milestone-toggle svg { fill: none; stroke: var(--charcoal); transform: rotate(45deg); }
 .milestone-body-inner { gap: clamp(1.2rem, 3vw, 2rem); padding: 0 1.45rem 1.45rem; }
 .milestone-photo-caption { font: 400 0.79rem/1.58 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif; color: rgba(245,240,232,0.8); }
 .milestone-photo-caption a { font-weight: 650; }
